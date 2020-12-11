@@ -92,6 +92,29 @@ public abstract class ReputationTrigger implements Listener {
             }
         }
     }
+
+    /**
+     * @param player The player involved with this trigger.
+     * @param specific A specific identifier to use at the end of the trigger name (I.e. KILL_CREEPER, where CREEPER is the specific.)
+     * @param extra One extra trigger to search for. (I.e. KILL_MONSTER, KILL_ANIMAL, etc.)
+     */
+    public void updateRep(@NotNull Player player, @NotNull String specific, @NotNull String extra) {
+        // TODO Implement functionality for extras to contain the [] wildcard.
+        AvalonPlayer ap = plugin.getAvalonPlayer(player);
+        if (ap == null) return;
+
+        ArrayList<String> queries = new ArrayList<>();
+
+        queries.add(this.getTriggerNameSpecific(specific));
+        queries.addAll(Arrays.asList(extra));
+        queries.add(this.getTriggerNameClean());
+
+        for (PlayerReputation rep : ap.getAllReputations()) {
+            for (String query : queries) {
+                if (updateRep(rep, query)) break;
+            }
+        }
+    }
     /**
      * @param player The player involved with this trigger.
      * @param specific A specific identifier to use at the end of the trigger name (I.e. KILL_CREEPER, where CREEPER is the specific.)

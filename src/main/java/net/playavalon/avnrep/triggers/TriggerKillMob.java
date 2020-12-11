@@ -24,7 +24,7 @@ public class TriggerKillMob extends ReputationTrigger {
 
         String mobType = "KILL_" + Utils.getEntityGroup(ent).toUpperCase();
 
-        updateRep(player, entType.name(), new String[] {mobType});
+        updateRep(player, entType.name(), mobType);
 
     }
 

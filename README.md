@@ -4,7 +4,7 @@ Avalon Reputation is a reputation management system initially created for the Av
 ## Reputation Factions
 Reputation factions are "groups" that the player can earn reputation and reputation levels in. Each faction is capable of unique parameters, including sources of earning/losing reputation, their max reputation levels, and how much reputation is required to level-up with them. All factions are created in the main `config.yml`
 ```
-Reputations:
+ReputationFactions:
   # The name of a reputation faction.
   Example:
     # The maximum reputation level a player can get with this faction.

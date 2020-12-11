@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: io.lumine.xikage:mythicmobs:4.9.2-SNAPSHOT">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/io/lumine/xikage/mythicmobs/4.9.2-SNAPSHOT/mythicmobs-4.9.2-SNAPSHOT.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/io/lumine/xikage/mythicmobs/4.9.2-SNAPSHOT/mythicmobs-4.9.2-SNAPSHOT-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/io/lumine/xikage/mythicmobs/4.9.2-SNAPSHOT/mythicmobs-4.9.2-SNAPSHOT-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

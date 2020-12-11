@@ -1,0 +1,24 @@
+Database:
+  Enabled: false
+  Host: localhost
+  Port: 3306
+  Database: AvN_Reputation
+  Username: root
+  Password: changeMe!
+
+Reputations:
+  Example:
+    MaxLevel: 20
+    FirstLevelCost: 25
+    LastLevelCost: 5000
+    RepCurve: -0.65
+    Sources:
+      - KILL_MONSTER:1
+      - CRAFT_DIAMOND_SWORD:5
+  AnotherExample:
+    MaxLevel: 15
+    FirstLevelCost: 25
+    LastLevelCost: 5000
+    RepCurve: -0.65
+    Sources:
+      - KILL_MONSTER:2

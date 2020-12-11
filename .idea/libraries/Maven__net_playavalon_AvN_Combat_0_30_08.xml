@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: net.playavalon:AvN_Combat:0.30.08">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/net/playavalon/Avn_Combat/0.30.08/AvN_Combat-0.30.08.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/net/playavalon/AvN_Combat/0.30.08/AvN_Combat-0.30.08-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/net/playavalon/AvN_Combat/0.30.08/AvN_Combat-0.30.08-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

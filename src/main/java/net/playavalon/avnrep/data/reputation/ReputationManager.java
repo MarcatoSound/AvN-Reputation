@@ -15,7 +15,7 @@ public class ReputationManager {
     public ReputationManager() {
         reputations = new HashMap<>();
 
-        ConfigurationSection configSec = plugin.config.getConfigurationSection("Reputations");
+        ConfigurationSection configSec = plugin.config.getConfigurationSection("ReputationFactions");
         if (configSec == null) return;
         Set<String> reps = configSec.getKeys(false);
 

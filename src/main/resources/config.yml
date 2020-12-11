@@ -6,15 +6,23 @@ Database:
   Username: root
   Password: changeMe!
 
-Reputations:
+ReputationFactions:
+  # The name of a reputation faction.
   Example:
+    # The maximum reputation level a player can get with this faction.
     MaxLevel: 20
+    # The minimum amount of reputation required to level up the first time.
     FirstLevelCost: 25
+    # The maximum amount of reputation required to level up the last time.
     LastLevelCost: 5000
+    # A curve that manipulates how steeply or inversely the reputation cost for each level increases.
     RepCurve: -0.65
+    # A list of reputation sources that manipulate how the player gains or loses reputation with this faction.
     Sources:
+      - KILL_ENDERMAN:5
       - KILL_MONSTER:1
-      - CRAFT_DIAMOND_SWORD:5
+      - BREAK_SPAWNER:100
+      - CRAFT_DIAMOND_SWORD:15
   AnotherExample:
     MaxLevel: 15
     FirstLevelCost: 25

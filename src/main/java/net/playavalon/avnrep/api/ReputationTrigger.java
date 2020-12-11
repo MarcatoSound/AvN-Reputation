@@ -49,7 +49,7 @@ public abstract class ReputationTrigger implements Listener {
         HashMap<String, Double> sources = rep.getRepSources();
         if (sources.containsKey(query)) {
             if (plugin.config.getBoolean("Debug", false)) System.out.println(debugPrefix + "Found!");
-            rep.addRepValue(sources.get(query));
+            rep.addRepValue(sources.get(query), query);
             return true;
         }
         return false;

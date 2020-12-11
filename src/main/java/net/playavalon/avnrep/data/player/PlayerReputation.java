@@ -2,9 +2,15 @@ package net.playavalon.avnrep.data.player;
 
 import net.playavalon.avncombatspigot.utility.Util;
 import net.playavalon.avnrep.Utils;
+import net.playavalon.avnrep.api.events.PlayerGainReputationEvent;
+import net.playavalon.avnrep.api.events.PlayerGainReputationLevelEvent;
+import net.playavalon.avnrep.api.events.PlayerLoseReputationEvent;
 import net.playavalon.avnrep.data.reputation.Reputation;
 import org.apache.commons.lang.WordUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Cancellable;
+import org.bukkit.event.Event;
 
 import java.util.HashMap;
 
@@ -39,17 +45,61 @@ public class PlayerReputation {
     }
 
     public void setRepValue(double val) {
-        repValue = Math.max(Util.round(val, 2), 0);
-        tryLevelUp();
+        Event event;
+        if (val > 0) {
+            event = new PlayerGainReputationEvent(ap, this, val);
+            PlayerGainReputationEvent gainEvent = (PlayerGainReputationEvent)event;
+            Bukkit.getPluginManager().callEvent(gainEvent);
+            if (gainEvent.isCancelled()) return;
+
+            repValue = Math.max(Util.round(((PlayerGainReputationEvent)event).getAmount(), 2), 0);
+            tryLevelUp(gainEvent);
+
+        } else if (val < 0) {
+            event = new PlayerLoseReputationEvent(ap, this, Math.abs(val));
+            PlayerLoseReputationEvent lossEvent = (PlayerLoseReputationEvent)event;
+            Bukkit.getPluginManager().callEvent(lossEvent);
+            if (lossEvent.isCancelled()) return;
+
+            repValue = Math.max(Util.round(-((PlayerLoseReputationEvent)event).getAmount(), 2), 0);
+
+        }
         ap.savePlayerData();
     }
-
     public void addRepValue(double val) {
         setRepValue(repValue + val);
     }
-
     public void removeRepValue(double val) {
         setRepValue(repValue - val);
+    }
+
+    public void setRepValue(double val, String trigger) {
+        Event event;
+        if (val > 0) {
+            event = new PlayerGainReputationEvent(ap, this, val, trigger);
+            PlayerGainReputationEvent gainEvent = (PlayerGainReputationEvent)event;
+            Bukkit.getPluginManager().callEvent(gainEvent);
+            if (gainEvent.isCancelled()) return;
+
+            repValue = Math.max(Util.round(((PlayerGainReputationEvent)event).getAmount(), 2), 0);
+            tryLevelUp(gainEvent);
+
+        } else if (val < 0) {
+            event = new PlayerLoseReputationEvent(ap, this, Math.abs(val), trigger);
+            PlayerLoseReputationEvent lossEvent = (PlayerLoseReputationEvent)event;
+            Bukkit.getPluginManager().callEvent(lossEvent);
+            if (lossEvent.isCancelled()) return;
+
+            repValue = Math.max(Util.round(-((PlayerLoseReputationEvent)event).getAmount(), 2), 0);
+
+        }
+        ap.savePlayerData();
+    }
+    public void addRepValue(double val, String trigger) {
+        setRepValue(repValue + val, trigger);
+    }
+    public void removeRepValue(double val, String trigger) {
+        setRepValue(repValue - val, trigger);
     }
 
     // Reputation level manipulation methods
@@ -72,16 +122,27 @@ public class PlayerReputation {
     }
 
     // Reputation utility methods
-    private void tryLevelUp() {
+    private void tryLevelUp(PlayerGainReputationEvent gainEvent) {
         // Level up processing
+        double oldRep = repValue;
+        double newRep = repValue;
         double nextLevelCost = Utils.calcLevelCost(this.rep, repLevel+1);
+        int oldLevel = repLevel;
+        int newLevel = repLevel;
         if (repValue >= nextLevelCost) {
 
             while (repValue >= nextLevelCost) {
-                repValue -= nextLevelCost;
-                repLevel++;
+                newRep -= nextLevelCost;
+                newLevel++;
                 nextLevelCost = Utils.calcLevelCost(this.rep, repLevel+1);
             }
+
+            PlayerGainReputationLevelEvent event = new PlayerGainReputationLevelEvent(ap, this, oldRep, newRep, oldLevel, newLevel, gainEvent);
+            Bukkit.getPluginManager().callEvent(event);
+            if (event.isCancelled()) return;
+
+            repValue = Util.round(event.getNewRep(), 2);
+            repLevel = event.getNewLevel();
             if (repValue < 0) repValue = 0;
 
             Player player = ap.getPlayer();

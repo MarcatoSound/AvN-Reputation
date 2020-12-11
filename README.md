@@ -22,6 +22,7 @@ Reputations:
     - BREAK_SPAWNER:100
     - CRAFT_DIAMOND_SWORD:15
 ```
+[Learn more about reputation sources here!](https://github.com/destradious/AvN-Reputation/wiki/Reputation-Sources-&-Triggers)
 
 ## For Developers
 

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
+  <groupId>net.playavalon</groupId>
+  <artifactId>AvN-Rep</artifactId>
+  <versioning>
+    <versions>
+      <version>0.1-SNAPSHOT</version>
+    </versions>
+    <lastUpdated>20201211210016</lastUpdated>
+  </versioning>
+</metadata>

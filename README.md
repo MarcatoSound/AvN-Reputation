@@ -47,12 +47,12 @@ To use the Avalon Reputation API, all you need to do is create a new instance of
 ```java
 public final class ExamplePlugin extends JavaPlugin {
 
-  ReputationAPI api;
+    ReputationAPI api;
 
-  @Override
-  public void onEnable() {
-    api = new ReputationAPI();
-  }
+    @Override
+    public void onEnable() {
+        api = new ReputationAPI();
+    }
   
 }
 ```

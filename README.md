@@ -22,6 +22,7 @@ Reputations:
     - BREAK_SPAWNER:100
     - CRAFT_DIAMOND_SWORD:15
 ```
+[Learn more about reputation sources here!](https://github.com/destradious/AvN-Reputation/wiki/Reputation-Sources-&-Triggers)
 
 ## For Developers
 
@@ -41,6 +42,24 @@ To use Avalon Reputation in your own plugins, add the following repository and d
     <version>0.1</version>
 </dependency>
 ```
+
+### Using the API
+To use the Avalon Reputation API, all you need to do is create a new instance of the ReputationAPI object, like so.
+```java
+public final class ExamplePlugin extends JavaPlugin {
+
+    ReputationAPI api;
+
+    @Override
+    public void onEnable() {
+        api = new ReputationAPI();
+    }
+  
+}
+```
+If you want to retrieve or change reputation information for the player, there is a slew of methods the API provides. Any IDE should be able to show you what these methods are when you use the `api` variable in this example.
+
+This API object is also what you will use to register custom triggers, by running `api.registerTrigger(new YourTriggerHere())`
 
 ### Creating a custom reputation trigger
 Avalon Reputation comes with an incredibly easy way to create your own reputation triggers. All that you need to do is extend the ReputationTrigger object, provide a trigger label, and add an event you want to catch. Let's take a look.
@@ -62,7 +81,7 @@ public class TriggerPlayerDeath extends ReputationTrigger {
 ```
 Here is a basic trigger for player deaths. This makes it so that, if a player dies, and a faction contains `- PLAYER_DEATH:-5` as one of its sources, it will subtract 5 from the player's reputation with that faction.
 
-This can be used for any events, including custom events. 
+This can be used for any events, including custom events. Don't forget to register your new trigger with the API, using `api.registerTrigger(new TriggerPlayerDeath())`
 
 ### Trigger wildcards
 Triggers also support certain wildcards, which are useful if you want to have alternate versions of the trigger. Let's look at the KILL_MOB trigger.

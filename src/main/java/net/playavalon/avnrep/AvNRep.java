@@ -56,7 +56,6 @@ public final class AvNRep extends JavaPlugin {
         }
 
         Bukkit.getPluginManager().registerEvents(new AvalonListener(), this);
-        Bukkit.getPluginManager().registerEvents(new ReputationListener(), this);
 
         // Register reputation triggers
         ReputationAPI api = new ReputationAPI();

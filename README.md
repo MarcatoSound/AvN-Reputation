@@ -39,7 +39,7 @@ To use Avalon Reputation in your own plugins, add the following repository and d
 <dependency>
     <groupId>net.playavalon</groupId>
     <artifactId>AvN-Rep</artifactId>
-    <version>0.1</version>
+    <version>0.1-SNAPSHOT</version>
 </dependency>
 ```
 

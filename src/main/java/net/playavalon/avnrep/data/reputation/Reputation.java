@@ -3,6 +3,7 @@ package net.playavalon.avnrep.data.reputation;
 import net.playavalon.avnrep.Utils;
 import org.bukkit.configuration.ConfigurationSection;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,6 +17,7 @@ public class Reputation {
     private int maxLevel;
     private double curve;
     private HashMap<String, Double> sources;
+    private HashMap<Integer, List<String>> levelCommands;
 
     public Reputation(ConfigurationSection config) {
         if (config == null) return;
@@ -31,6 +33,18 @@ public class Reputation {
             String[] pair = source.split(":");
             String trigger = pair[0].toUpperCase();
             sources.put(trigger, Double.parseDouble(pair[1]));
+        }
+
+        ConfigurationSection levels = config.getConfigurationSection("Commands");
+        if (levels == null) {
+            return;
+        }
+        levelCommands = new HashMap<>();
+        List<String> commands;
+        for (String path : levels.getKeys(false)) {
+            commands = levels.getStringList(path);
+            int level = Integer.parseInt(path);
+            levelCommands.put(level, commands);
         }
 
         System.out.println(this);
@@ -62,6 +76,10 @@ public class Reputation {
 
     public boolean hasSource(String source) {
         return sources.containsKey(source.toUpperCase());
+    }
+
+    public HashMap<Integer, List<String>> getLevelCommands() {
+        return levelCommands;
     }
 
 

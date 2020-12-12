@@ -13,6 +13,7 @@ import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 
 import java.util.HashMap;
+import java.util.List;
 
 import static net.playavalon.avnrep.AvNRep.debugPrefix;
 
@@ -76,6 +77,7 @@ public class PlayerReputation {
     public void setRepValue(double val, String trigger) {
         Event event;
         if (val > 0) {
+
             event = new PlayerGainReputationEvent(ap, this, val, trigger);
             PlayerGainReputationEvent gainEvent = (PlayerGainReputationEvent)event;
             Bukkit.getPluginManager().callEvent(gainEvent);
@@ -85,6 +87,7 @@ public class PlayerReputation {
             tryLevelUp(gainEvent);
 
         } else if (val < 0) {
+
             event = new PlayerLoseReputationEvent(ap, this, Math.abs(val), trigger);
             PlayerLoseReputationEvent lossEvent = (PlayerLoseReputationEvent)event;
             Bukkit.getPluginManager().callEvent(lossEvent);
@@ -131,7 +134,7 @@ public class PlayerReputation {
         int newLevel = repLevel;
         if (repValue >= nextLevelCost) {
 
-            while (repValue >= nextLevelCost) {
+            while (newRep >= nextLevelCost) {
                 newRep -= nextLevelCost;
                 newLevel++;
                 nextLevelCost = Utils.calcLevelCost(this.rep, repLevel+1);
@@ -148,6 +151,23 @@ public class PlayerReputation {
             Player player = ap.getPlayer();
             player.playSound(player.getLocation(), "entity.player.levelup", 1.0F, 1.0F);
             player.sendMessage(Utils.colorize(debugPrefix + "&aYour " + WordUtils.capitalize(rep.getName()) + " reputation level went up!"));
+
+        }
+
+    }
+
+    public void runLevelCommands(int level) {
+        HashMap<Integer, List<String>> levelCommands = rep.getLevelCommands();
+        if (!levelCommands.containsKey(level)) return;
+        List<String> commands = levelCommands.get(level);
+        Player player = ap.getPlayer();
+        for (String command : commands) {
+            // Handling of placeholders
+            if (command.contains("<player>")) command = command.replaceAll("<player>", player.getDisplayName());
+            if (command.contains("<level>")) command = command.replaceAll("<level>", String.valueOf(level));
+            if (command.contains("<faction>")) command = command.replaceAll("<faction>", rep.getName());
+
+            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
         }
     }
 

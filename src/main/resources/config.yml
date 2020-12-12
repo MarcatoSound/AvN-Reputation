@@ -18,11 +18,20 @@ ReputationFactions:
     # A curve that manipulates how steeply or inversely the reputation cost for each level increases.
     RepCurve: -0.65
     # A list of reputation sources that manipulate how the player gains or loses reputation with this faction.
+    # Visit https://github.com/destradious/AvN-Reputation/wiki/Reputation-Sources-&-Triggers for available sources.
     Sources:
       - KILL_ENDERMAN:5
       - KILL_MONSTER:1
       - BREAK_SPAWNER:100
       - CRAFT_DIAMOND_SWORD:15
+    # Commands to execute when a player reaches a specific reputation level.
+    Commands:
+      # The commands that will fire when a player reaches this level. Use <player> for the player's display name.
+      5:
+        - "minecraft:say <player> reached reputation level 5 with Example!"
+        - "minecraft:give <player> diamond"
+      10:
+        - "minecraft:give <player> netherstar"
   AnotherExample:
     MaxLevel: 15
     FirstLevelCost: 25

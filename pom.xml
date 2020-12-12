@@ -106,6 +106,10 @@
             <name>avnreputation</name>
             <url>file:${project.basedir}/lib</url>
         </repository>
+        <repository>
+            <id>placeholderapi</id>
+            <url>https://repo.extendedclip.com/content/repositories/placeholderapi/</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -131,6 +135,12 @@
             <groupId>net.playavalon</groupId>
             <artifactId>AvN_Combat</artifactId>
             <version>0.30.08</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>me.clip</groupId>
+            <artifactId>placeholderapi</artifactId>
+            <version>2.10.9</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>

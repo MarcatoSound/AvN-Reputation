@@ -30,5 +30,7 @@
     <orderEntry type="library" scope="PROVIDED" name="Maven: io.lumine.xikage:mythicmobs:4.9.2-SNAPSHOT" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: net.playavalon:AvN_Items:0.1.1" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: net.playavalon:AvN_Combat:0.30.08" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: me.clip:placeholderapi:2.10.9" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.jetbrains:annotations:19.0.0" level="project" />
   </component>
 </module>

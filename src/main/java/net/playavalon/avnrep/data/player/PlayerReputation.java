@@ -1,5 +1,6 @@
 package net.playavalon.avnrep.data.player;
 
+import me.clip.placeholderapi.PlaceholderAPI;
 import net.playavalon.avncombatspigot.utility.Util;
 import net.playavalon.avnrep.Utils;
 import net.playavalon.avnrep.api.events.PlayerGainReputationEvent;
@@ -166,6 +167,10 @@ public class PlayerReputation {
             if (command.contains("<player>")) command = command.replaceAll("<player>", player.getDisplayName());
             if (command.contains("<level>")) command = command.replaceAll("<level>", String.valueOf(level));
             if (command.contains("<faction>")) command = command.replaceAll("<faction>", rep.getName());
+            if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
+                // PlaceholderAPI is present. Use PAPI for additional placeholders.
+                command = PlaceholderAPI.setPlaceholders(player, command);
+            }
 
             Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
         }

@@ -9,6 +9,7 @@ import net.playavalon.avnrep.api.events.PlayerLoseReputationEvent;
 import net.playavalon.avnrep.data.reputation.Reputation;
 import org.apache.commons.lang.WordUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
@@ -172,7 +173,10 @@ public class PlayerReputation {
                 command = PlaceholderAPI.setPlaceholders(player, command);
             }
 
-            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
+            CommandSender sender = Bukkit.getConsoleSender();
+            if (command.contains("!asPlayer")) sender = player;
+
+            Bukkit.dispatchCommand(sender, command);
         }
     }
 

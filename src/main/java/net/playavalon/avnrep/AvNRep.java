@@ -1,5 +1,7 @@
 package net.playavalon.avnrep;
 
+import net.playavalon.avncombatspigot.AvalonCombat;
+import net.playavalon.avnitems.AvalonItems;
 import net.playavalon.avnrep.api.ReputationAPI;
 import net.playavalon.avnrep.triggers.*;
 import net.playavalon.avnrep.data.player.AvalonPlayer;
@@ -34,6 +36,10 @@ public final class AvNRep extends JavaPlugin {
     // File and folder locations
     public File playerData;
 
+    // Avalon plugin booleans
+    public AvalonItems avni;
+    public AvalonCombat avnc;
+
     @Override
     public void onEnable() {
 
@@ -46,6 +52,15 @@ public final class AvNRep extends JavaPlugin {
 
         if (config.getBoolean("Database.Enabled", false)) {
             database = new OnlineSQLDatabase();
+        }
+
+        if (Bukkit.getPluginManager().getPlugin("AvNItems") != null) {
+            System.out.println(debugPrefix + "Found AvNItems plugins! Enabling compatibility...");
+            avni = (AvalonItems)Bukkit.getPluginManager().getPlugin("AvNItems");
+        }
+        if (Bukkit.getPluginManager().getPlugin("AvNCombat") != null) {
+            System.out.println(debugPrefix + "Found AvNCombat plugins! Enabling compatibility...");
+            avnc = (AvalonCombat)Bukkit.getPluginManager().getPlugin("AvNCombat");
         }
 
         repManager = new FactionManager();

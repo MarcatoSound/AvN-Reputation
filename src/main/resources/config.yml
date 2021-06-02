@@ -19,6 +19,14 @@ ReputationFactions:
     LastLevelCost: 5000
     # A curve that manipulates how steeply or inversely the reputation cost for each level increases.
     RepCurve: -0.65
+    # Information about reputation currencies for trading and shops
+    Currency:
+      # Whether or not to enable this feature for this faction
+      Enabled: true
+      # What item to use as this faction's currency. Can be an Avalon Item.
+      Item: EMERALD
+      # How many reputation points the player must get before being rewarded a currency item
+      CurrencyRate: 25
     # A list of reputation sources that manipulate how the player gains or loses reputation with this faction.
     # Visit https://github.com/destradious/AvN-Reputation/wiki/Reputation-Sources-&-Triggers for available sources.
     Sources:

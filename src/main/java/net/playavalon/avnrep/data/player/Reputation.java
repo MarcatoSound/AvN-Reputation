@@ -12,6 +12,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.HashMap;
 import java.util.List;
@@ -24,6 +25,8 @@ public class Reputation {
     private AvalonPlayer ap;
     private int repLevel;
     private double repValue;
+
+    private int currencyStatus = 0;
 
     public Reputation(Faction faction, AvalonPlayer ap) {
         this.faction = faction;
@@ -49,6 +52,9 @@ public class Reputation {
         return repValue;
     }
 
+    public void initRepValue(double val) {
+        repValue = val;
+    }
     // Sets the reputation value to the specified amount
     public void setRepValue(double val) {
         Event event;
@@ -59,8 +65,11 @@ public class Reputation {
             Bukkit.getPluginManager().callEvent(gainEvent);
             if (gainEvent.isCancelled()) return;
 
-            repValue = Math.max(Util.round(((PlayerGainReputationEvent)event).getAmount(), 2), 0);
+            repValue += Math.max(Util.round(((PlayerGainReputationEvent)event).getAmount(), 2), 0);
             tryLevelUp(gainEvent);
+
+            currencyStatus += val;
+            processCurrency();
 
         } else if (val < 0) {
             // Generate the event, stopping here if the event gets cancelled.
@@ -69,17 +78,18 @@ public class Reputation {
             Bukkit.getPluginManager().callEvent(lossEvent);
             if (lossEvent.isCancelled()) return;
 
-            repValue = Math.max(Util.round(-((PlayerLoseReputationEvent)event).getAmount(), 2), 0);
+            repValue -= Math.max(Util.round(-((PlayerLoseReputationEvent)event).getAmount(), 2), 0);
 
         }
         ap.savePlayerData();
     }
     public void addRepValue(double val) {
-        setRepValue(repValue + val);
+        setRepValue(val);
     }
     public void removeRepValue(double val) {
-        setRepValue(repValue - val);
+        setRepValue(-val);
     }
+
     // Shut up, IntelliJ, this needs to be public...
     public void setRepValue(double val, String trigger) {
         Event event;
@@ -91,8 +101,11 @@ public class Reputation {
             Bukkit.getPluginManager().callEvent(gainEvent);
             if (gainEvent.isCancelled()) return;
 
-            repValue = Math.max(Util.round(((PlayerGainReputationEvent)event).getAmount(), 2), 0);
+            repValue += Math.max(Util.round(((PlayerGainReputationEvent)event).getAmount(), 2), 0);
             tryLevelUp(gainEvent);
+
+            currencyStatus += val;
+            processCurrency();
 
         } else if (val < 0) {
 
@@ -102,16 +115,37 @@ public class Reputation {
             Bukkit.getPluginManager().callEvent(lossEvent);
             if (lossEvent.isCancelled()) return;
 
-            repValue = Math.max(Util.round(-((PlayerLoseReputationEvent)event).getAmount(), 2), 0);
+            repValue -= Math.max(Util.round(-((PlayerLoseReputationEvent)event).getAmount(), 2), 0);
 
         }
         ap.savePlayerData();
     }
     public void addRepValue(double val, String trigger) {
-        setRepValue(repValue + val, trigger);
+        setRepValue(val, trigger);
     }
     public void removeRepValue(double val, String trigger) {
-        setRepValue(repValue - val, trigger);
+        setRepValue(-val, trigger);
+    }
+
+    private void processCurrency() {
+        if (!faction.hasCurrency()) return;
+
+        int currencyAmount = 0;
+        while (currencyStatus >= faction.getCurrencyRate()) {
+            currencyStatus -= faction.getCurrencyRate();
+            currencyAmount++;
+        }
+
+        if (currencyAmount > 0) giveCurrency(currencyAmount);
+
+    }
+    private void giveCurrency(int amount) {
+        Player player = ap.getPlayer();
+
+        player.sendMessage(Utils.colorize(debugPrefix + "&aYou earned &b" + amount + " " + faction.getCurrencyName() + "&a!"));
+        ItemStack currency = faction.getCurrency().clone();
+        currency.setAmount(amount);
+        Utils.giveOrDrop(player, currency);
     }
 
     /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

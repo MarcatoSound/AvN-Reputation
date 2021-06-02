@@ -58,8 +58,8 @@ public class AvalonPlayer {
         sb.append(Utils.fullColor("{#f5476d}==== " + player.getName() + "'s Reputation ===="));
         for (Reputation rep : reputationManager.getReputations()) {
             sb.append("\n&b" + rep.getFaction().getDisplayName() + ":");
-            sb.append("\n&a- Level: " + rep.getRepLevel());
-            sb.append("\n&a- Reputation: " + rep.getRepValue());
+            sb.append("\n&a- Reputation Level: " + rep.getRepLevel());
+            sb.append("\n&a- Reputation Points: " + rep.getRepValue());
         }
 
         return Utils.colorize(sb.toString());
@@ -96,7 +96,7 @@ public class AvalonPlayer {
                     Reputation rep = reputationManager.getReputation(name);
                     if (rep == null) continue;
                     rep.setRepLevel(reputations.getInt(name + ".level"));
-                    rep.setRepValue(reputations.getDouble(name + ".exp"));
+                    rep.initRepValue(reputations.getDouble(name + ".exp"));
                 }
 
             } catch (InvalidConfigurationException | IOException ex) {

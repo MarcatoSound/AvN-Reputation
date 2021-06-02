@@ -1,14 +1,20 @@
 package net.playavalon.avnrep;
 
 import net.md_5.bungee.api.ChatColor;
+import net.playavalon.avnitems.utility.Util;
 import net.playavalon.avnrep.data.reputation.Faction;
+import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 import java.sql.Timestamp;
 import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static net.playavalon.avnitems.AvalonItems.debugPrefix;
 
 public final class Utils {
 
@@ -76,6 +82,18 @@ public final class Utils {
 
     public static Timestamp getFutureTime(int minutes) {
         return new Timestamp(System.currentTimeMillis()+(minutes*60*1000));
+    }
+
+    public static void giveOrDrop(Player player, ItemStack item) {
+
+        if (item == null || item.getType() == Material.AIR) return;
+        if (player.getInventory().firstEmpty() == -1) {
+            player.sendMessage(Util.colorize(debugPrefix + "&cYour inventory is full! Item dropped to the ground..."));
+            player.getWorld().dropItem(player.getLocation(), item);
+        } else {
+            player.getInventory().addItem(item);
+        }
+
     }
 
     public static double calcLevelCost(Faction rep, double level) {

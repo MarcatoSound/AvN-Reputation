@@ -164,7 +164,7 @@ public final class OnlineSQLDatabase {
 
             Reputation rep = manager.getReputation(namespace.toUpperCase());
             rep.setRepLevel(level);
-            rep.setRepValue(value);
+            rep.initRepValue(value);
         }
 
     }

@@ -1,12 +1,19 @@
 package net.playavalon.avnrep.data.reputation;
 
+import net.playavalon.avnitems.AvalonItems;
+import net.playavalon.avnitems.database.AvalonItem;
+import net.playavalon.avnitems.utility.ItemUtils;
 import net.playavalon.avnrep.Utils;
+import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static net.playavalon.avnrep.AvNRep.plugin;
 
 public class Faction {
 
@@ -17,6 +24,12 @@ public class Faction {
     private double maxRep;
     private int maxLevel;
     private double curve;
+
+    private boolean currencyEnabled;
+    private ItemStack currency;
+    private String currencyName;
+    private int currencyRate;
+
     private HashMap<String, Double> sources;
     private HashMap<Integer, List<String>> levelCommands;
 
@@ -28,6 +41,42 @@ public class Faction {
         maxRep = config.getDouble("LastLevelCost", 5000);
         maxLevel = config.getInt("MaxLevel", 20);
         curve = config.getDouble("RepCurve", -0.5);
+
+        // Faction currency handling
+        currencyEnabled = config.getBoolean("Currency.Enabled", false);
+        if (currencyEnabled) {
+            if (plugin.avni != null) {
+                String itemName = config.getString("Currency.Item", "EMERALD");
+                assert itemName != null;
+                Material mat = Material.matchMaterial(itemName);
+                if (mat != null) {
+                    currency = new ItemStack(mat);
+                } else {
+                    AvalonItem aItem = plugin.avni.itemManager.getItem(itemName);
+                    if (aItem != null) {
+                        currency = aItem.item;
+                        currencyName = aItem.fullName;
+                    }
+                    else {
+                        currency = new ItemStack(Material.EMERALD);
+                        currencyName = Material.EMERALD.name();
+                    }
+                }
+            } else {
+                String itemName = config.getString("Currency.Item", "EMERALD");
+                assert itemName != null;
+                Material mat = Material.matchMaterial(itemName);
+                if (mat != null) {
+                    currency = new ItemStack(mat);
+                    currencyName = mat.name();
+                }
+                else {
+                    currency = new ItemStack(Material.EMERALD);
+                    currencyName = Material.EMERALD.name();
+                }
+            }
+            currencyRate = Math.max(config.getInt("Currency.CurrencyRate", 25), 1);
+        }
 
         sources = new HashMap<>();
         List<String> sourceList = config.getStringList("Sources");
@@ -55,7 +104,9 @@ public class Faction {
     public String getName() {
         return namespace;
     }
-    public String getDisplayName() { return Utils.colorize(displayName); }
+    public String getDisplayName() {
+        return Utils.colorize(displayName);
+    }
     public double getMinRep() {
         return minRep;
     }
@@ -67,6 +118,18 @@ public class Faction {
     }
     public double getCurve() {
         return curve;
+    }
+    public boolean hasCurrency() {
+        return currencyEnabled;
+    }
+    public ItemStack getCurrency() {
+        return currency;
+    }
+    public String getCurrencyName() {
+        return currencyName;
+    }
+    public int getCurrencyRate() {
+        return currencyRate;
     }
     public HashMap<String, Double> getSources() {
         return sources;
@@ -93,9 +156,11 @@ public class Faction {
         sb.append("\n-- Max Level: " + maxLevel);
         sb.append("\n-- Rep Curve: " + curve);
         sb.append("\n-- Min Rep: " + minRep);
-        sb.append("\n-- Lvl 5 Rep: " + Utils.calcLevelCost(this, 5));
-        sb.append("\n-- Lvl 10 Rep: " + Utils.calcLevelCost(this, 10));
         sb.append("\n-- Max Rep: " + maxRep);
+        if (currencyEnabled) {
+            sb.append("\n-- Currency: " + currencyName);
+            sb.append("\n-- Currency Rate: " + currencyRate);
+        }
         sb.append("\n-- Rep Sources: ");
         for (Map.Entry<String, Double> pair : sources.entrySet()) {
             sb.append("\n---- " + pair.getKey() + ": " + pair.getValue());

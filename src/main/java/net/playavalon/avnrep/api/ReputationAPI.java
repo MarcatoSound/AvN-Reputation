@@ -26,18 +26,18 @@ public class ReputationAPI {
 
     /**
      * Get a reputation object, containing information on how a particular reputation functions.
-     * @param reputation The namespace of the reputation we are retrieving
+     * @param faction The namespace of the faction we are retrieving from the player
      * @return The reputation object containing the reputation info
      */
-    public double getPlayerReputation(@NotNull Player player, @NotNull String reputation) {
+    public double getPlayerReputation(@NotNull Player player, @NotNull String faction) {
         try {
             AvalonPlayer ap = plugin.getAvalonPlayer(player);
             if (ap == null) {
                 throw new IllegalArgumentException("Could not find AvalonPlayer linked with provided player!");
             }
-            Reputation pRep = ap.getReputation(reputation);
+            Reputation pRep = ap.getReputation(faction);
             if (pRep == null) {
-                throw new IllegalArgumentException("Player does not have reputation '" + reputation + "'!");
+                throw new IllegalArgumentException("Player does not have faction '" + faction + "'!");
             }
             return pRep.getRepValue();
         } catch (IllegalArgumentException e) {
@@ -48,18 +48,18 @@ public class ReputationAPI {
 
     /**
      * Get a reputation object, containing information on how a particular reputation functions.
-     * @param reputation The namespace of the reputation we are retrieving
+     * @param faction The namespace of the faction we are retrieving from the player
      * @return The reputation object containing the reputation info
      */
-    public int getPlayerReputationLevel(@NotNull Player player, @NotNull String reputation) {
+    public int getPlayerReputationLevel(@NotNull Player player, @NotNull String faction) {
         try {
             AvalonPlayer ap = plugin.getAvalonPlayer(player);
             if (ap == null) {
                 throw new IllegalArgumentException("Could not find AvalonPlayer linked with provided player!");
             }
-            Reputation pRep = ap.getReputation(reputation);
+            Reputation pRep = ap.getReputation(faction);
             if (pRep == null) {
-                throw new IllegalArgumentException("Player does not have reputation '" + reputation + "'!");
+                throw new IllegalArgumentException("Player does not have faction '" + faction + "'!");
             }
             return pRep.getRepLevel();
         } catch (IllegalArgumentException e) {
@@ -75,19 +75,19 @@ public class ReputationAPI {
     /**
      * Add reputation to a player.
      * @param player The player we are adding reputation to
-     * @param reputation The namespace of the reputation we are adding to
+     * @param faction The namespace of the faction we are adding reputation to
      * @param value How much reputation we are adding
      * @return Whether or not we successfully added reputation to the player.
      */
-    public boolean addPlayerReputation(@NotNull Player player, @NotNull String reputation, double value) {
+    public boolean addPlayerReputation(@NotNull Player player, @NotNull String faction, double value) {
         try {
             AvalonPlayer ap = plugin.getAvalonPlayer(player);
             if (ap == null) {
                 throw new IllegalArgumentException("Could not find AvalonPlayer linked with provided player!");
             }
-            Reputation pRep = ap.getReputation(reputation);
+            Reputation pRep = ap.getReputation(faction);
             if (pRep == null) {
-                throw new IllegalArgumentException("Player does not have reputation '" + reputation + "'!");
+                throw new IllegalArgumentException("Player does not have faction '" + faction + "'!");
             }
 
             // We have all the info we need. Add reputation to the player.
@@ -102,19 +102,19 @@ public class ReputationAPI {
     /**
      * Set the reputation of a player.
      * @param player The player we are setting the reputation of
-     * @param reputation The namespace of the reputation we are setting
+     * @param faction The namespace of the faction we are setting the reputation of
      * @param value The new reputation value
      * @return Whether or not we successfully changed the players reputation
      */
-    public boolean setPlayerReputation(@NotNull Player player, @NotNull String reputation, double value) {
+    public boolean setPlayerReputation(@NotNull Player player, @NotNull String faction, double value) {
         try {
             AvalonPlayer ap = plugin.getAvalonPlayer(player);
             if (ap == null) {
                 throw new IllegalArgumentException("Could not find AvalonPlayer linked with provided player!");
             }
-            Reputation pRep = ap.getReputation(reputation);
+            Reputation pRep = ap.getReputation(faction);
             if (pRep == null) {
-                throw new IllegalArgumentException("Player does not have reputation '" + reputation + "'!");
+                throw new IllegalArgumentException("Player does not have faction '" + faction + "'!");
             }
 
             // We have all the info we need. Set the reputation value of the player.
@@ -129,19 +129,19 @@ public class ReputationAPI {
     /**
      * Remove reputation from a player.
      * @param player The player we are removing reputation from
-     * @param reputation The namespace of the reputation we are removing from
+     * @param faction The namespace of the faction we are subtracting reputation from
      * @param value How much reputation we are removing
      * @return Whether or not we successfully removed reputation from the player.
      */
-    public boolean subtractPlayerReputation(@NotNull Player player, @NotNull String reputation, double value) {
+    public boolean subtractPlayerReputation(@NotNull Player player, @NotNull String faction, double value) {
         try {
             AvalonPlayer ap = plugin.getAvalonPlayer(player);
             if (ap == null) {
                 throw new IllegalArgumentException("Could not find AvalonPlayer linked with provided player!");
             }
-            Reputation pRep = ap.getReputation(reputation);
+            Reputation pRep = ap.getReputation(faction);
             if (pRep == null) {
-                throw new IllegalArgumentException("Player does not have reputation '" + reputation + "'!");
+                throw new IllegalArgumentException("Player does not have faction '" + faction + "'!");
             }
 
             // We have all the info we need. Remove reputation from the player.
@@ -158,7 +158,7 @@ public class ReputationAPI {
     /**
      * Add reputation levels to a player.
      * @param player The player we are adding reputation levels to
-     * @param reputation The namespace of the reputation we are increasing the level of
+     * @param reputation The namespace of the faction we are increasing the level of
      * @param level How many reputation levels we are adding
      * @return Whether or not we successfully added reputation levels to the player.
      */
@@ -170,7 +170,7 @@ public class ReputationAPI {
             }
             Reputation pRep = ap.getReputation(reputation);
             if (pRep == null) {
-                throw new IllegalArgumentException("Player does not have reputation '" + reputation + "'!");
+                throw new IllegalArgumentException("Player does not have faction '" + reputation + "'!");
             }
 
             // We have all the info we need. Add reputation levels to the player.
@@ -185,7 +185,7 @@ public class ReputationAPI {
     /**
      * Set the reputation level of a player.
      * @param player The player we are setting the reputation level of
-     * @param reputation The namespace of the reputation we are setting the level of
+     * @param reputation The namespace of the faction we are setting the level of
      * @param level The new reputation level
      * @return Whether or not we successfully changed the players reputation level
      */
@@ -197,7 +197,7 @@ public class ReputationAPI {
             }
             Reputation pRep = ap.getReputation(reputation);
             if (pRep == null) {
-                throw new IllegalArgumentException("Player does not have reputation '" + reputation + "'!");
+                throw new IllegalArgumentException("Player does not have faction '" + reputation + "'!");
             }
 
             // We have all the info we need. Set the reputation level of the player.
@@ -212,7 +212,7 @@ public class ReputationAPI {
     /**
      * Remove reputation levels from a player.
      * @param player The player we are removing reputation levels from
-     * @param reputation The namespace of the reputation we are decreasing the level of
+     * @param reputation The namespace of the faction we are decreasing the level of
      * @param level How many reputation levels we are removing
      * @return Whether or not we successfully removed reputation levels from the player.
      */
@@ -224,7 +224,7 @@ public class ReputationAPI {
             }
             Reputation pRep = ap.getReputation(reputation);
             if (pRep == null) {
-                throw new IllegalArgumentException("Player does not have reputation '" + reputation + "'!");
+                throw new IllegalArgumentException("Player does not have faction '" + reputation + "'!");
             }
 
             // We have all the info we need. Subtract reputation levels from the player.

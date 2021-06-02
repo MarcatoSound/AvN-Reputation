@@ -10,7 +10,6 @@ import org.bukkit.entity.Player;
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.util.Collection;
 
 import static net.playavalon.avnrep.AvNRep.debugPrefix;
@@ -19,11 +18,11 @@ import static net.playavalon.avnrep.AvNRep.plugin;
 public class AvalonPlayer {
 
     private Player player;
-    private PlayerReputationManager playerReputationManager;
+    private ReputationManager reputationManager;
 
     public AvalonPlayer(Player player) {
         this.player = player;
-        this.playerReputationManager = new PlayerReputationManager(this);
+        this.reputationManager = new ReputationManager(this);
 
         if (!plugin.dbEnabled) {
             // Since there is no database, create a blank player data file if it doesn't exist
@@ -38,15 +37,15 @@ public class AvalonPlayer {
 
     }
 
-    public PlayerReputationManager getPlayerReputationManager() {
-        return this.playerReputationManager;
+    public ReputationManager getReputationManager() {
+        return this.reputationManager;
     }
 
-    public PlayerReputation getReputation(String namespace) {
-        return playerReputationManager.getReputation(namespace);
+    public Reputation getReputation(String namespace) {
+        return reputationManager.getReputation(namespace);
     }
-    public Collection<PlayerReputation> getAllReputations() {
-        return playerReputationManager.getReputations();
+    public Collection<Reputation> getAllReputations() {
+        return reputationManager.getReputations();
     }
 
     public Player getPlayer() {
@@ -57,8 +56,8 @@ public class AvalonPlayer {
     public String printReputation() {
         StringBuilder sb = new StringBuilder();
         sb.append(Utils.fullColor("{#f5476d}==== " + player.getName() + "'s Reputation ===="));
-        for (PlayerReputation rep : playerReputationManager.getReputations()) {
-            sb.append("\n&b" + WordUtils.capitalize(rep.getRep().getName()) + ":");
+        for (Reputation rep : reputationManager.getReputations()) {
+            sb.append("\n&b" + rep.getFaction().getDisplayName() + ":");
             sb.append("\n&a- Level: " + rep.getRepLevel());
             sb.append("\n&a- Reputation: " + rep.getRepValue());
         }
@@ -91,10 +90,10 @@ public class AvalonPlayer {
 
                 ConfigurationSection reputations = playerData.getConfigurationSection("reputations");
                 if (reputations == null) reputations = playerData.createSection("reputations");
-                // Loop through reputations in the config and load them into memory.
+                // Loop through factions in the config and load them into memory.
                 for (String name : reputations.getKeys(false)) {
                     name = name.toLowerCase();
-                    PlayerReputation rep = playerReputationManager.getReputation(name);
+                    Reputation rep = reputationManager.getReputation(name);
                     if (rep == null) continue;
                     rep.setRepLevel(reputations.getInt(name + ".level"));
                     rep.setRepValue(reputations.getDouble(name + ".exp"));
@@ -125,9 +124,9 @@ public class AvalonPlayer {
                 playerData.load(playerFile);
 
                 // Loop through reputations on the player and save them to YML.
-                for (PlayerReputation rep : playerReputationManager.getReputations()) {
-                    playerData.set("reputations."+rep.getRep().getName()+".level", rep.getRepLevel());
-                    playerData.set("reputations."+rep.getRep().getName()+".exp", rep.getRepValue());
+                for (Reputation rep : reputationManager.getReputations()) {
+                    playerData.set("reputations."+rep.getFaction().getName()+".level", rep.getRepLevel());
+                    playerData.set("reputations."+rep.getFaction().getName()+".exp", rep.getRepValue());
                 }
 
                 playerData.save(playerFile);

@@ -8,11 +8,11 @@ import java.util.Set;
 
 import static net.playavalon.avnrep.AvNRep.plugin;
 
-public class ReputationManager {
+public class FactionManager {
 
-    private HashMap<String, Reputation> reputations;
+    private HashMap<String, Faction> reputations;
 
-    public ReputationManager() {
+    public FactionManager() {
         reputations = new HashMap<>();
 
         ConfigurationSection configSec = plugin.config.getConfigurationSection("ReputationFactions");
@@ -20,21 +20,21 @@ public class ReputationManager {
         Set<String> reps = configSec.getKeys(false);
 
         for (String rep : reps) {
-            Reputation repObj = new Reputation(configSec.getConfigurationSection(rep));
+            Faction repObj = new Faction(configSec.getConfigurationSection(rep));
             reputations.put(repObj.getName(), repObj);
         }
     }
 
-    public void put(Reputation rep) {
+    public void put(Faction rep) {
         reputations.putIfAbsent(rep.getName(), rep);
     }
     public void remove(String name) {
         reputations.remove(name);
     }
-    public Reputation get(String name) {
+    public Faction get(String name) {
         return reputations.get(name);
     }
-    public Collection<Reputation> getValues() {
+    public Collection<Faction> getValues() {
         return reputations.values();
     }
 

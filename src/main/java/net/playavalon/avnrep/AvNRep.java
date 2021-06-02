@@ -5,9 +5,9 @@ import net.playavalon.avnrep.triggers.*;
 import net.playavalon.avnrep.data.player.AvalonPlayer;
 import net.playavalon.avnrep.data.AvalonPlayerManager;
 import net.playavalon.avnrep.data.OnlineSQLDatabase;
-import net.playavalon.avnrep.data.player.PlayerReputation;
-import net.playavalon.avnrep.data.reputation.Reputation;
-import net.playavalon.avnrep.data.reputation.ReputationManager;
+import net.playavalon.avnrep.data.player.Reputation;
+import net.playavalon.avnrep.data.reputation.Faction;
+import net.playavalon.avnrep.data.reputation.FactionManager;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -28,7 +28,7 @@ public final class AvNRep extends JavaPlugin {
     public boolean dbEnabled = false;
 
     // Player data constants
-    public ReputationManager repManager;
+    public FactionManager repManager;
     public AvalonPlayerManager playerManager;
 
     // File and folder locations
@@ -48,7 +48,7 @@ public final class AvNRep extends JavaPlugin {
             database = new OnlineSQLDatabase();
         }
 
-        repManager = new ReputationManager();
+        repManager = new FactionManager();
         playerManager = new AvalonPlayerManager();
         playerData = new File(getDataFolder(), "playerdata");
         if (!playerData.exists()) {
@@ -117,7 +117,7 @@ public final class AvNRep extends JavaPlugin {
                     }
                 }
 
-                PlayerReputation playerRep;
+                Reputation playerRep;
                 int level;
                 double value;
 
@@ -127,7 +127,7 @@ public final class AvNRep extends JavaPlugin {
                         return false;
                     case "checklevel":
                         if (args.length != 3) return false;
-                        Reputation rep = repManager.get(args[1]);
+                        Faction rep = repManager.get(args[1]);
                         if (rep == null) {
                             sender.sendMessage(debugPrefix + Utils.colorize("&cCould not find reputation by the name " + args[0]));
                             return false;

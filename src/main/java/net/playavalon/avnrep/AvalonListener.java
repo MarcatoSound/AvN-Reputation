@@ -1,8 +1,8 @@
 package net.playavalon.avnrep;
 
 import net.playavalon.avnrep.api.events.PlayerGainReputationLevelEvent;
-import net.playavalon.avnrep.data.player.PlayerReputation;
-import net.playavalon.avnrep.data.reputation.Reputation;
+import net.playavalon.avnrep.data.player.Reputation;
+import net.playavalon.avnrep.data.reputation.Faction;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -18,10 +18,10 @@ public class AvalonListener implements Listener {
 
     @EventHandler
     public void onReputationLevel(PlayerGainReputationLevelEvent event) {
-        PlayerReputation pRep = event.getPlayerReputation();
-        Reputation rep = pRep.getRep();
+        Reputation pRep = event.getReputation();
+        Faction faction = pRep.getFaction();
         int level = event.getNewLevel();
-        if (!rep.getLevelCommands().containsKey(level)) return;
+        if (!faction.getLevelCommands().containsKey(level)) return;
 
         pRep.runLevelCommands(level);
     }

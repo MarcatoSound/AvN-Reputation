@@ -1,7 +1,7 @@
 package net.playavalon.avnrep.api.events;
 
 import net.playavalon.avnrep.data.player.AvalonPlayer;
-import net.playavalon.avnrep.data.player.PlayerReputation;
+import net.playavalon.avnrep.data.player.Reputation;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
@@ -13,27 +13,27 @@ public class PlayerGainReputationLevelEvent extends Event implements Cancellable
     private boolean cancelled;
     private Player player;
     private AvalonPlayer ap;
-    private PlayerReputation playerReputation;
+    private Reputation reputation;
     private double oldRep;
     private double newRep;
     private int oldLevel;
     private int newLevel;
     private PlayerGainReputationEvent gainEvent;
 
-    public PlayerGainReputationLevelEvent(AvalonPlayer ap, PlayerReputation pRep, double oldRep, double newRep, int oldLevel, int newLevel) {
+    public PlayerGainReputationLevelEvent(AvalonPlayer ap, Reputation pRep, double oldRep, double newRep, int oldLevel, int newLevel) {
         this.player = ap.getPlayer();
         this.ap = ap;
-        this.playerReputation = pRep;
+        this.reputation = pRep;
         this.oldRep = oldRep;
         this.newRep = newRep;
         this.oldLevel = oldLevel;
         this.newLevel = newLevel;
         this.gainEvent = null;
     }
-    public PlayerGainReputationLevelEvent(AvalonPlayer ap, PlayerReputation pRep, double oldRep, double newRep, int oldLevel, int newLevel, PlayerGainReputationEvent gainEvent) {
+    public PlayerGainReputationLevelEvent(AvalonPlayer ap, Reputation pRep, double oldRep, double newRep, int oldLevel, int newLevel, PlayerGainReputationEvent gainEvent) {
         this.player = ap.getPlayer();
         this.ap = ap;
-        this.playerReputation = pRep;
+        this.reputation = pRep;
         this.oldRep = oldRep;
         this.newRep = newRep;
         this.oldLevel = oldLevel;
@@ -73,11 +73,11 @@ public class PlayerGainReputationLevelEvent extends Event implements Cancellable
     }
 
     /**
-     * @see PlayerReputation
+     * @see Reputation
      * @return The PlayerReputation object the triggered this event.
      */
-    public PlayerReputation getPlayerReputation() {
-        return playerReputation;
+    public Reputation getReputation() {
+        return reputation;
     }
 
 

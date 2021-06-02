@@ -1,9 +1,8 @@
 package net.playavalon.avnrep.data;
 
 import net.playavalon.avnrep.data.player.AvalonPlayer;
-import net.playavalon.avnrep.data.player.PlayerReputation;
-import net.playavalon.avnrep.data.player.PlayerReputationManager;
-import net.playavalon.avnrep.data.reputation.Reputation;
+import net.playavalon.avnrep.data.player.Reputation;
+import net.playavalon.avnrep.data.player.ReputationManager;
 import org.bukkit.configuration.file.FileConfiguration;
 
 import java.sql.*;
@@ -12,7 +11,7 @@ import java.util.Properties;
 import static net.playavalon.avnrep.AvNRep.debugPrefix;
 import static net.playavalon.avnrep.AvNRep.plugin;
 
-public class OnlineSQLDatabase {
+public final class OnlineSQLDatabase {
 
     private static Connection dbConnection;
     private static String dbHost, dbDatabase, dbUserName, dbPassword;
@@ -24,6 +23,10 @@ public class OnlineSQLDatabase {
 	[ CLASS CONSTRUCTOR ]
 	~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
+    /**
+     * <p>NOTE: Database functionality is not yet implemented!
+     * In layman's terms... this literally does not work.</p>
+     */
     public OnlineSQLDatabase() {
 
         // Database Stuff
@@ -74,15 +77,15 @@ public class OnlineSQLDatabase {
         }
         openStatement();
 
-        // TODO Rewrite this statement for correct table configuration
+        // TODO This entire statement is copied from Avalon Items. Rewrite this statement for correct table configuration
         String typesEnumSQL = "--\n" +
-                "-- Table structure for table `AvN_ItemTypes`\n" +
+                "-- Table structure for table `AvN_Reputations`\n" +
                 "--\n" +
-                "CREATE TABLE IF NOT EXISTS `AvN_ItemTypes` (\n" +
+                "CREATE TABLE IF NOT EXISTS `AvN_Reputations` (\n" +
                 "  `type` varchar(256) NOT NULL\n" +
                 ") ENGINE=InnoDB DEFAULT CHARSET=latin1;\n" +
                 "--\n" +
-                "INSERT INTO `AvN_ItemTypes` (`type`) VALUES \n" +
+                "INSERT INTO `AvN_Reputations` (`type`) VALUES \n" +
                 "  ('ARMOR'),\n" +
                 "  ('MISC'),\n" +
                 "  ('TOOL'),\n" +
@@ -124,7 +127,7 @@ public class OnlineSQLDatabase {
 
     }
 
-    public void openStatement() throws SQLException {
+    private void openStatement() throws SQLException {
 
         if (statement == null || statement.isClosed()) {
 
@@ -145,19 +148,21 @@ public class OnlineSQLDatabase {
         }
         openStatement();
 
-        String SELECT = "SELECT * FROM " + dbDatabase + ".AvN_PlayerRep ";
-        String WHERE = "WHERE uuid = '" + ap.getPlayer().getUniqueId() + "'";
+        String selectStatement = "SELECT * FROM " + dbDatabase + ".AvN_PlayerRep WHERE uuid = ?";
+        PreparedStatement preparedStatement = dbConnection.prepareStatement(selectStatement);
 
-        ResultSet result = statement.executeQuery(SELECT + WHERE);
+        preparedStatement.setString(1, String.valueOf(ap.getPlayer().getUniqueId()));
 
-        PlayerReputationManager manager = ap.getPlayerReputationManager();
+        ResultSet result = preparedStatement.executeQuery();
+
+        ReputationManager manager = ap.getReputationManager();
 
         while (result.next()) {
             String namespace = result.getString("reputation");
             int level = result.getInt("level");
             double value = result.getDouble("value");
 
-            PlayerReputation rep = manager.getReputation(namespace.toUpperCase());
+            Reputation rep = manager.getReputation(namespace.toUpperCase());
             rep.setRepLevel(level);
             rep.setRepValue(value);
         }
@@ -165,6 +170,14 @@ public class OnlineSQLDatabase {
     }
 
     public void savePlayerData(AvalonPlayer ap) throws SQLException {
+        try {
+            openConnection();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        openStatement();
+
+        // TODO Actually make this functionality.
 
     }
 

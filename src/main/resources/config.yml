@@ -7,8 +7,10 @@ Database:
   Password: changeMe!
 
 ReputationFactions:
-  # The name of a reputation faction.
-  Example:
+  # The unique name of a reputation faction.
+  example:
+    # The display name of the faction in commands and GUIs
+    DisplayName: "&7Example"
     # The maximum reputation level a player can get with this faction.
     MaxLevel: 20
     # The minimum amount of reputation required to level up the first time.
@@ -32,7 +34,8 @@ ReputationFactions:
         - "minecraft:give <player> diamond"
       10:
         - "minecraft:give <player> netherstar"
-  AnotherExample:
+  anotherexample:
+    DisplayName: "&2Another Example"
     MaxLevel: 15
     FirstLevelCost: 25
     LastLevelCost: 5000

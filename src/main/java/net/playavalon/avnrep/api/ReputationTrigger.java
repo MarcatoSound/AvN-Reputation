@@ -1,13 +1,14 @@
 package net.playavalon.avnrep.api;
 
 import net.playavalon.avnrep.data.player.AvalonPlayer;
-import net.playavalon.avnrep.data.player.PlayerReputation;
+import net.playavalon.avnrep.data.player.Reputation;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 
 import static net.playavalon.avnrep.AvNRep.debugPrefix;
@@ -43,9 +44,9 @@ public abstract class ReputationTrigger implements Listener {
      * @param query The source/trigger label in the reputation config. (I.e. KILL_MONSTER)
      * @return True if the query was found. False if not.
      */
-    private boolean updateRep(@NotNull PlayerReputation rep, @NotNull String query) {
+    private boolean updateRep(@NotNull Reputation rep, @NotNull String query) {
 
-        if (plugin.config.getBoolean("Debug", false)) System.out.println(debugPrefix + "Checking " + rep.getRep().getName() + " for " + query + "...");
+        if (plugin.config.getBoolean("Debug", false)) System.out.println(debugPrefix + "Checking " + rep.getFaction().getName() + " for " + query + "...");
         HashMap<String, Double> sources = rep.getRepSources();
         if (sources.containsKey(query)) {
             if (plugin.config.getBoolean("Debug", false)) System.out.println(debugPrefix + "Found!");
@@ -59,11 +60,11 @@ public abstract class ReputationTrigger implements Listener {
      * @param player The player involved with this trigger.
      * @param queries A list of triggers to search for. (I.e. KILL_MONSTER, KILL_ANIMAL, etc.)
      */
-    public void updateRep(@NotNull Player player, @NotNull String... queries) {
+    protected void updateRep(@NotNull Player player, @NotNull String... queries) {
         AvalonPlayer ap = plugin.getAvalonPlayer(player);
         if (ap == null) return;
 
-        for (PlayerReputation rep : ap.getAllReputations()) {
+        for (Reputation rep : ap.getAllReputations()) {
             for (String query : queries) {
                 if (updateRep(rep, query)) break;
             }
@@ -75,7 +76,7 @@ public abstract class ReputationTrigger implements Listener {
      * @param specific A specific identifier to use at the end of the trigger name (I.e. KILL_CREEPER, where CREEPER is the specific.)
      * @param extra A list of triggers to search for. (I.e. KILL_MONSTER, KILL_ANIMAL, etc.)
      */
-    public void updateRep(@NotNull Player player, @NotNull String specific, @NotNull String[] extra) {
+    protected void updateRep(@NotNull Player player, @NotNull String specific, @NotNull String[] extra) {
         // TODO Implement functionality for extras to contain the [] wildcard.
         AvalonPlayer ap = plugin.getAvalonPlayer(player);
         if (ap == null) return;
@@ -86,7 +87,7 @@ public abstract class ReputationTrigger implements Listener {
         queries.addAll(Arrays.asList(extra));
         queries.add(this.getTriggerNameClean());
 
-        for (PlayerReputation rep : ap.getAllReputations()) {
+        for (Reputation rep : ap.getAllReputations()) {
             for (String query : queries) {
                 if (updateRep(rep, query)) break;
             }
@@ -98,7 +99,7 @@ public abstract class ReputationTrigger implements Listener {
      * @param specific A specific identifier to use at the end of the trigger name (I.e. KILL_CREEPER, where CREEPER is the specific.)
      * @param extra One extra trigger to search for. (I.e. KILL_MONSTER, KILL_ANIMAL, etc.)
      */
-    public void updateRep(@NotNull Player player, @NotNull String specific, @NotNull String extra) {
+    protected void updateRep(@NotNull Player player, @NotNull String specific, @NotNull String extra) {
         // TODO Implement functionality for extras to contain the [] wildcard.
         AvalonPlayer ap = plugin.getAvalonPlayer(player);
         if (ap == null) return;
@@ -106,10 +107,10 @@ public abstract class ReputationTrigger implements Listener {
         ArrayList<String> queries = new ArrayList<>();
 
         queries.add(this.getTriggerNameSpecific(specific));
-        queries.addAll(Arrays.asList(extra));
+        queries.addAll(Collections.singletonList(extra));
         queries.add(this.getTriggerNameClean());
 
-        for (PlayerReputation rep : ap.getAllReputations()) {
+        for (Reputation rep : ap.getAllReputations()) {
             for (String query : queries) {
                 if (updateRep(rep, query)) break;
             }
@@ -119,7 +120,7 @@ public abstract class ReputationTrigger implements Listener {
      * @param player The player involved with this trigger.
      * @param specific A specific identifier to use at the end of the trigger name (I.e. KILL_CREEPER, where CREEPER is the specific.)
      */
-    public void updateRep(@NotNull Player player, @NotNull String specific) {
+    protected void updateRep(@NotNull Player player, @NotNull String specific) {
         AvalonPlayer ap = plugin.getAvalonPlayer(player);
         if (ap == null) return;
 
@@ -128,7 +129,7 @@ public abstract class ReputationTrigger implements Listener {
         queries.add(this.getTriggerNameSpecific(specific));
         queries.add(this.getTriggerNameClean());
 
-        for (PlayerReputation rep : ap.getAllReputations()) {
+        for (Reputation rep : ap.getAllReputations()) {
             for (String query : queries) {
                 if (updateRep(rep, query)) break;
             }

@@ -7,7 +7,7 @@ import org.bukkit.entity.Player;
 import java.util.HashMap;
 import java.util.UUID;
 
-public class AvalonPlayerManager {
+public final class AvalonPlayerManager {
     
     private HashMap<UUID, AvalonPlayer> players;
 
@@ -15,9 +15,9 @@ public class AvalonPlayerManager {
         players = new HashMap<>();
     }
 
-    ////
-    // WRAPPERS
-    ////
+    /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    [ WRAPPERS ]
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
     public void put(Player player) {
         AvalonPlayer ap = new AvalonPlayer(player);
         ap.loadPlayerData();
@@ -28,9 +28,9 @@ public class AvalonPlayerManager {
     }
 
 
-    ////
-    // GETTERS
-    ////
+    /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    [ GETTERS ]
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
     public AvalonPlayer getByPlayer(Player player) {
         return players.get(player.getUniqueId());
     }

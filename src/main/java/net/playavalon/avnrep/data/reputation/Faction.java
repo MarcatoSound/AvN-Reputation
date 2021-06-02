@@ -8,9 +8,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class Reputation {
+public class Faction {
 
     private String namespace;
+    private String displayName;
 
     private double minRep;
     private double maxRep;
@@ -19,9 +20,10 @@ public class Reputation {
     private HashMap<String, Double> sources;
     private HashMap<Integer, List<String>> levelCommands;
 
-    public Reputation(ConfigurationSection config) {
+    public Faction(ConfigurationSection config) {
         if (config == null) return;
         namespace = config.getName().toLowerCase();
+        displayName = config.getString("DisplayName", namespace);
         minRep = config.getDouble("FirstLevelCost", 25);
         maxRep = config.getDouble("LastLevelCost", 5000);
         maxLevel = config.getInt("MaxLevel", 20);
@@ -35,16 +37,15 @@ public class Reputation {
             sources.put(trigger, Double.parseDouble(pair[1]));
         }
 
-        ConfigurationSection levels = config.getConfigurationSection("Commands");
-        if (levels == null) {
-            return;
-        }
         levelCommands = new HashMap<>();
-        List<String> commands;
-        for (String path : levels.getKeys(false)) {
-            commands = levels.getStringList(path);
-            int level = Integer.parseInt(path);
-            levelCommands.put(level, commands);
+        ConfigurationSection levels = config.getConfigurationSection("Commands");
+        if (levels != null) {
+            List<String> commands;
+            for (String path : levels.getKeys(false)) {
+                commands = levels.getStringList(path);
+                int level = Integer.parseInt(path);
+                levelCommands.put(level, commands);
+            }
         }
 
         System.out.println(this);
@@ -54,6 +55,7 @@ public class Reputation {
     public String getName() {
         return namespace;
     }
+    public String getDisplayName() { return Utils.colorize(displayName); }
     public double getMinRep() {
         return minRep;
     }
@@ -70,7 +72,7 @@ public class Reputation {
         return sources;
     }
     public double getSourceValue(String source) {
-        if (!hasSource(source)) return 0;
+        if (!hasSource(source)) return 0; // We return 0 since it's possible for sources to have negative values.
         return sources.get(source.toUpperCase());
     }
 

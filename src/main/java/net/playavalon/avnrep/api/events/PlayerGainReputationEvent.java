@@ -1,11 +1,12 @@
 package net.playavalon.avnrep.api.events;
 
 import net.playavalon.avnrep.data.player.AvalonPlayer;
-import net.playavalon.avnrep.data.player.PlayerReputation;
+import net.playavalon.avnrep.data.player.Reputation;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
+import org.jetbrains.annotations.NotNull;
 
 public class PlayerGainReputationEvent extends Event implements Cancellable {
 
@@ -13,25 +14,26 @@ public class PlayerGainReputationEvent extends Event implements Cancellable {
     private boolean cancelled;
     private Player player;
     private AvalonPlayer ap;
-    private PlayerReputation playerReputation;
+    private Reputation reputation;
     private double amount;
     private String triggerName;
 
-    public PlayerGainReputationEvent(AvalonPlayer ap, PlayerReputation pRep, double amount) {
+    public PlayerGainReputationEvent(AvalonPlayer ap, Reputation pRep, double amount) {
         this.player = ap.getPlayer();
         this.ap = ap;
-        this.playerReputation = pRep;
+        this.reputation = pRep;
         this.amount = amount;
         this.triggerName = "NONE";
     }
-    public PlayerGainReputationEvent(AvalonPlayer ap, PlayerReputation pRep, double amount, String triggerName) {
+    public PlayerGainReputationEvent(AvalonPlayer ap, Reputation pRep, double amount, String triggerName) {
         this.player = ap.getPlayer();
         this.ap = ap;
-        this.playerReputation = pRep;
+        this.reputation = pRep;
         this.amount = amount;
         this.triggerName = triggerName;
     }
 
+    @NotNull
     public HandlerList getHandlers() {
         return HANDLERS_LIST;
     }
@@ -64,11 +66,11 @@ public class PlayerGainReputationEvent extends Event implements Cancellable {
     }
 
     /**
-     * @see PlayerReputation
+     * @see Reputation
      * @return The PlayerReputation object the triggered this event.
      */
-    public PlayerReputation getPlayerReputation() {
-        return playerReputation;
+    public Reputation getReputation() {
+        return reputation;
     }
 
     /**

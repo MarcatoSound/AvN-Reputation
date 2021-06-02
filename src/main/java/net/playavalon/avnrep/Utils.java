@@ -1,7 +1,7 @@
 package net.playavalon.avnrep;
 
 import net.md_5.bungee.api.ChatColor;
-import net.playavalon.avnrep.data.reputation.Reputation;
+import net.playavalon.avnrep.data.reputation.Faction;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.LivingEntity;
 
@@ -10,7 +10,7 @@ import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class Utils {
+public final class Utils {
 
     public static String colorize(String s) {
 
@@ -78,7 +78,7 @@ public class Utils {
         return new Timestamp(System.currentTimeMillis()+(minutes*60*1000));
     }
 
-    public static double calcLevelCost(Reputation rep, double level) {
+    public static double calcLevelCost(Faction rep, double level) {
         double minRep = rep.getMinRep(); //plugin.config.getDouble("");
         double maxRep = rep.getMaxRep();
         double diff = maxRep-minRep;

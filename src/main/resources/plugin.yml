@@ -5,10 +5,7 @@ api-version: 1.13
 prefix: AvNRep
 authors: [Marc_Seamus]
 description: Reputation management plugin for Avalon.
-softdepend:
-  - MythicMobs
-  - AvNCombat
-  - AvNItems
+softdepend: [MythicMobs,AvNCombat,AvNItems]
 commands:
   reputation:
     description: The core Avalon Reputation command.

@@ -1,0 +1,18 @@
+exampleshop:
+  DisplayName: &6Example Shop
+  Faction: example
+  Items:
+    exampleitem1:
+      Material: DIAMOND
+      Quantity: 4
+      Cost: 10
+    exampleitem2:
+      Material: DIAMOND_SWORD
+      Quantity: 1
+      Cost: 5
+#    exampleitem3:
+#      RepLevel: 2
+#      AvalonItem: mythrilore
+#      Quantity: 2
+#      Quality: 1
+#      Cost: 3

@@ -45,10 +45,10 @@ public class Faction {
         // Faction currency handling
         currencyEnabled = config.getBoolean("Currency.Enabled", false);
         if (currencyEnabled) {
+            String itemName = config.getString("Currency.Item", "EMERALD");
+            assert itemName != null;
+            Material mat = Material.matchMaterial(itemName);
             if (plugin.avni != null) {
-                String itemName = config.getString("Currency.Item", "EMERALD");
-                assert itemName != null;
-                Material mat = Material.matchMaterial(itemName);
                 if (mat != null) {
                     currency = new ItemStack(mat);
                 } else {
@@ -59,20 +59,17 @@ public class Faction {
                     }
                     else {
                         currency = new ItemStack(Material.EMERALD);
-                        currencyName = Material.EMERALD.name();
+                        currencyName = Material.EMERALD.toString();
                     }
                 }
             } else {
-                String itemName = config.getString("Currency.Item", "EMERALD");
-                assert itemName != null;
-                Material mat = Material.matchMaterial(itemName);
                 if (mat != null) {
                     currency = new ItemStack(mat);
                     currencyName = mat.name();
                 }
                 else {
                     currency = new ItemStack(Material.EMERALD);
-                    currencyName = Material.EMERALD.name();
+                    currencyName = Material.EMERALD.toString();
                 }
             }
             currencyRate = Math.max(config.getInt("Currency.CurrencyRate", 25), 1);

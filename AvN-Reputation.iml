@@ -32,5 +32,7 @@
     <orderEntry type="library" scope="PROVIDED" name="Maven: net.playavalon:AvN_Combat:0.30.08" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: me.clip:placeholderapi:2.10.9" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.jetbrains:annotations:19.0.0" level="project" />
+    <orderEntry type="library" name="Maven: commons-io:commons-io:2.7" level="project" />
+    <orderEntry type="library" name="Maven: net.playavalon:AvnGUI:0.1.16" level="project" />
   </component>
 </module>

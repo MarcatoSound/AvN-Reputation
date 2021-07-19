@@ -1,13 +1,16 @@
 package net.playavalon.avnrep;
 
 import net.md_5.bungee.api.ChatColor;
+import net.playavalon.avnitems.utility.StringUtils;
 import net.playavalon.avnitems.utility.Util;
 import net.playavalon.avnrep.data.reputation.Faction;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.SkullMeta;
 
 import java.sql.Timestamp;
 import java.util.Random;

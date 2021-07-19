@@ -1,8 +1,11 @@
 package net.playavalon.avnrep;
 
 import net.playavalon.avncombatspigot.AvalonCombat;
+import net.playavalon.avngui.AvnAPI;
+import net.playavalon.avngui.AvnGUI;
 import net.playavalon.avnitems.AvalonItems;
 import net.playavalon.avnrep.api.ReputationAPI;
+import net.playavalon.avnrep.data.shops.ShopManager;
 import net.playavalon.avnrep.triggers.*;
 import net.playavalon.avnrep.data.player.AvalonPlayer;
 import net.playavalon.avnrep.data.AvalonPlayerManager;
@@ -26,6 +29,7 @@ public final class AvNRep extends JavaPlugin {
     public static String debugPrefix;
     public FileConfiguration config;
     public OnlineSQLDatabase database;
+    public AvnAPI avnAPI;
 
     // Config constants
     public boolean dbEnabled = false;
@@ -33,6 +37,10 @@ public final class AvNRep extends JavaPlugin {
     // Player data constants
     public FactionManager repManager;
     public AvalonPlayerManager playerManager;
+
+    // Shop management
+    public ShopManager shopManager;
+    public File ymlShops;
 
     // File and folder locations
     public File playerData;
@@ -54,6 +62,11 @@ public final class AvNRep extends JavaPlugin {
         new BukkitRunnable() {
             @Override
             public void run() {
+
+                // API Setup
+                avnAPI = new AvnAPI(plugin);
+                AvnGUI.debug = false;
+
 
                 if (config.getBoolean("Database.Enabled", false)) {
                     database = new OnlineSQLDatabase();
@@ -97,6 +110,12 @@ public final class AvNRep extends JavaPlugin {
                     api.registerTrigger(new TriggerGatherAvalonItem());
                     api.registerTrigger(new TriggerGatherAvalonItemHQ());
                 }
+
+
+                // Initialize reputation shops
+                shopManager = new ShopManager();
+                ymlShops = new File(getDataFolder(), "shops");
+                new YMLShopAdapter();
 
 
                 // Functionality for hot loading and reloading (via say PlugMan)
@@ -217,6 +236,13 @@ public final class AvNRep extends JavaPlugin {
                             return false;
                         }
                         playerRep.setRepLevel(level);
+                        break;
+
+                    case "testgui":
+                        if (!(sender instanceof Player)) return false;
+                        player = (Player)sender;
+                        avnAPI.openGUIGroup(player, "shop_exampleshop");
+                        break;
 
                     default:
                         target = Bukkit.getPlayer(args[0]);

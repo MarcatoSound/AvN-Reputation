@@ -7,12 +7,12 @@ import net.playavalon.avnrep.Utils;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.sql.Timestamp;
+import java.util.*;
 
+import static net.playavalon.avnrep.AvNRep.debugPrefix;
 import static net.playavalon.avnrep.AvNRep.plugin;
 
 public class Faction {
@@ -31,7 +31,11 @@ public class Faction {
     private int currencyRate;
 
     private HashMap<String, Double> sources;
+    private ArrayList<DynamicRepSource> dynamicSources;
     private HashMap<Integer, List<String>> levelCommands;
+
+    private BukkitRunnable dynamicSourceCycle;
+    private long currentDate;
 
     public Faction(ConfigurationSection config) {
         if (config == null) return;
@@ -48,9 +52,13 @@ public class Faction {
             String itemName = config.getString("Currency.Item", "EMERALD");
             assert itemName != null;
             Material mat = Material.matchMaterial(itemName);
+            System.out.println("Material: " + mat);
+
+            // If AvNi is present...
             if (plugin.avni != null) {
                 if (mat != null) {
                     currency = new ItemStack(mat);
+                    currencyName = mat.toString();
                 } else {
                     AvalonItem aItem = plugin.avni.itemManager.getItem(itemName);
                     if (aItem != null) {
@@ -65,7 +73,7 @@ public class Faction {
             } else {
                 if (mat != null) {
                     currency = new ItemStack(mat);
-                    currencyName = mat.name();
+                    currencyName = mat.toString();
                 }
                 else {
                     currency = new ItemStack(Material.EMERALD);
@@ -83,6 +91,32 @@ public class Faction {
             sources.put(trigger, Double.parseDouble(pair[1]));
         }
 
+        dynamicSources = new ArrayList<>();
+        ConfigurationSection dynRepConfig = config.getConfigurationSection("DynamicSources");
+        if (dynRepConfig != null) {
+            for (String key : dynRepConfig.getKeys(false)) {
+                sourceList = dynRepConfig.getStringList(key);
+                dynamicSources.add(new DynamicRepSource(key, sourceList));
+            }
+        }
+
+        currentDate = (System.currentTimeMillis() / 60000) / 1440;
+        dynamicSourceCycle = new BukkitRunnable() {
+            @Override
+            public void run() {
+                long newDate = (System.currentTimeMillis() / 60000) / 1440;
+                if (currentDate == newDate) return;
+                currentDate = newDate;
+
+                System.out.println(debugPrefix + "Good morning! Updating dynamic reputation sources for factions...");
+
+                randomizeDynamicSources();
+            }
+        };
+        dynamicSourceCycle.runTaskTimerAsynchronously(plugin, 0, 1200);
+
+        randomizeDynamicSources();
+
         levelCommands = new HashMap<>();
         ConfigurationSection levels = config.getConfigurationSection("Commands");
         if (levels != null) {
@@ -97,6 +131,25 @@ public class Faction {
         System.out.println(this);
 
     }
+
+
+    public void randomizeDynamicSources() {
+        System.out.println(debugPrefix + "Updating dynamic rep sources for faction '" + namespace + "': ");
+        for (DynamicRepSource dynamicSource : dynamicSources) {
+            // Remove the old reputation source
+            if (dynamicSource.getCurrentSource() != null)
+                sources.remove(dynamicSource.getCurrentSource().getKey());
+
+            // Update and retrieve a new reputation source
+            Map.Entry<String, Double> source = dynamicSource.next();
+
+            System.out.println(debugPrefix + "- " + dynamicSource.getNamespace() + ": " + source.getKey());
+
+            // Register the new source with this faction
+            sources.put(source.getKey(), source.getValue());
+        }
+    }
+
 
     public String getName() {
         return namespace;

@@ -244,6 +244,14 @@ public final class AvNRep extends JavaPlugin {
                         avnAPI.openGUIGroup(player, "shop_exampleshop");
                         break;
 
+                    case "updatesources":
+                        for (Faction faction : repManager.getValues()) {
+                            faction.randomizeDynamicSources();
+                            System.out.println(faction.toString());
+                        }
+                        sender.sendMessage(debugPrefix + Utils.colorize("&aSuccessfully updated faction dynamic reputation sources! (Check console)"));
+                        break;
+
                     default:
                         target = Bukkit.getPlayer(args[0]);
                         if (target == null) {

@@ -30,7 +30,7 @@ public class Faction {
     private String currencyName;
     private int currencyRate;
 
-    private HashMap<String, Double> sources;
+    private HashMap<String, RepSource> repSources;
     private ArrayList<DynamicRepSource> dynamicSources;
     private HashMap<Integer, List<String>> levelCommands;
 
@@ -83,20 +83,23 @@ public class Faction {
             currencyRate = Math.max(config.getInt("Currency.CurrencyRate", 25), 1);
         }
 
-        sources = new HashMap<>();
-        List<String> sourceList = config.getStringList("Sources");
-        for (String source : sourceList) {
-            String[] pair = source.split(":");
-            String trigger = pair[0].toUpperCase();
-            sources.put(trigger, Double.parseDouble(pair[1]));
+        repSources = new HashMap<>();
+        ConfigurationSection repSourceConfigs = config.getConfigurationSection("Sources");
+        if (repSourceConfigs != null) {
+            for (String key : repSourceConfigs.getKeys(false)) {
+                ConfigurationSection repSourceConfig = repSourceConfigs.getConfigurationSection(key);
+                if (repSourceConfig == null) continue;
+                repSources.put(repSourceConfig.getName(), new RepSource(repSourceConfig));
+            }
         }
 
         dynamicSources = new ArrayList<>();
         ConfigurationSection dynRepConfig = config.getConfigurationSection("DynamicSources");
         if (dynRepConfig != null) {
             for (String key : dynRepConfig.getKeys(false)) {
-                sourceList = dynRepConfig.getStringList(key);
-                dynamicSources.add(new DynamicRepSource(key, sourceList));
+                ConfigurationSection dynSourceConfig = dynRepConfig.getConfigurationSection(key);
+                if (dynSourceConfig == null) continue;
+                dynamicSources.add(new DynamicRepSource(dynSourceConfig));
             }
         }
 
@@ -138,15 +141,15 @@ public class Faction {
         for (DynamicRepSource dynamicSource : dynamicSources) {
             // Remove the old reputation source
             if (dynamicSource.getCurrentSource() != null)
-                sources.remove(dynamicSource.getCurrentSource().getKey());
+                repSources.remove(dynamicSource.getCurrentSource().getTrigger());
 
             // Update and retrieve a new reputation source
-            Map.Entry<String, Double> source = dynamicSource.next();
+            RepSource source = dynamicSource.next();
 
-            System.out.println(debugPrefix + "- " + dynamicSource.getNamespace() + ": " + source.getKey());
+            System.out.println(debugPrefix + "- " + dynamicSource.getNamespace() + ": " + source.getTrigger());
 
             // Register the new source with this faction
-            sources.put(source.getKey(), source.getValue());
+            repSources.put(source.getTrigger(), source);
         }
     }
 
@@ -181,16 +184,21 @@ public class Faction {
     public int getCurrencyRate() {
         return currencyRate;
     }
-    public HashMap<String, Double> getSources() {
-        return sources;
+    public HashMap<String, RepSource> getRepSources() {
+        return repSources;
     }
     public double getSourceValue(String source) {
         if (!hasSource(source)) return 0; // We return 0 since it's possible for sources to have negative values.
-        return sources.get(source.toUpperCase());
+
+        RepSource repSource = repSources.get(source.toUpperCase());
+
+        if (repSource == null) return 0;
+
+        return repSource.getValue();
     }
 
     public boolean hasSource(String source) {
-        return sources.containsKey(source.toUpperCase());
+        return repSources.containsKey(source.toUpperCase());
     }
 
     public HashMap<Integer, List<String>> getLevelCommands() {
@@ -212,8 +220,8 @@ public class Faction {
             sb.append("\n-- Currency Rate: " + currencyRate);
         }
         sb.append("\n-- Rep Sources: ");
-        for (Map.Entry<String, Double> pair : sources.entrySet()) {
-            sb.append("\n---- " + pair.getKey() + ": " + pair.getValue());
+        for (Map.Entry<String, RepSource> pair : repSources.entrySet()) {
+            sb.append("\n---- " + pair.getKey() + ": " + pair.getValue().getValue());
         }
 
         return sb.toString();

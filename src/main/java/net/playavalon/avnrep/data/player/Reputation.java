@@ -1,12 +1,12 @@
 package net.playavalon.avnrep.data.player;
 
 import me.clip.placeholderapi.PlaceholderAPI;
-import net.playavalon.avncombatspigot.utility.Util;
 import net.playavalon.avnrep.Utils;
 import net.playavalon.avnrep.api.events.PlayerGainReputationEvent;
 import net.playavalon.avnrep.api.events.PlayerGainReputationLevelEvent;
 import net.playavalon.avnrep.api.events.PlayerLoseReputationEvent;
 import net.playavalon.avnrep.data.reputation.Faction;
+import net.playavalon.avnrep.data.reputation.RepSource;
 import org.apache.commons.lang.WordUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -14,6 +14,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -40,8 +41,8 @@ public class Reputation {
     public Faction getFaction() {
         return faction;
     }
-    public HashMap<String, Double> getRepSources() {
-        return faction.getSources();
+    public HashMap<String, RepSource> getRepSources() {
+        return faction.getRepSources();
     }
 
     /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -65,7 +66,7 @@ public class Reputation {
             Bukkit.getPluginManager().callEvent(gainEvent);
             if (gainEvent.isCancelled()) return;
 
-            repValue += Math.max(Util.round(((PlayerGainReputationEvent)event).getAmount(), 2), 0);
+            repValue += Math.max(Utils.round(((PlayerGainReputationEvent)event).getAmount(), 2), 0);
             tryLevelUp(gainEvent);
 
             currencyStatus += val;
@@ -78,7 +79,7 @@ public class Reputation {
             Bukkit.getPluginManager().callEvent(lossEvent);
             if (lossEvent.isCancelled()) return;
 
-            repValue -= Math.max(Util.round(-((PlayerLoseReputationEvent)event).getAmount(), 2), 0);
+            repValue -= Math.max(Utils.round(-((PlayerLoseReputationEvent)event).getAmount(), 2), 0);
 
         }
         ap.savePlayerData();
@@ -101,7 +102,7 @@ public class Reputation {
             Bukkit.getPluginManager().callEvent(gainEvent);
             if (gainEvent.isCancelled()) return;
 
-            repValue += Math.max(Util.round(((PlayerGainReputationEvent)event).getAmount(), 2), 0);
+            repValue += Math.max(Utils.round(((PlayerGainReputationEvent)event).getAmount(), 2), 0);
             tryLevelUp(gainEvent);
 
             currencyStatus += val;
@@ -115,7 +116,7 @@ public class Reputation {
             Bukkit.getPluginManager().callEvent(lossEvent);
             if (lossEvent.isCancelled()) return;
 
-            repValue -= Math.max(Util.round(-((PlayerLoseReputationEvent)event).getAmount(), 2), 0);
+            repValue -= Math.max(Utils.round(-((PlayerLoseReputationEvent)event).getAmount(), 2), 0);
 
         }
         ap.savePlayerData();
@@ -194,7 +195,7 @@ public class Reputation {
             Bukkit.getPluginManager().callEvent(event);
             if (event.isCancelled()) return;
 
-            repValue = Util.round(event.getNewRep(), 2);
+            repValue = Utils.round(event.getNewRep(), 2);
             repLevel = event.getNewLevel();
             if (repValue < 0) repValue = 0;
 

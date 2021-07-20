@@ -6,18 +6,18 @@ import java.util.*;
 
 public class DynamicRepSource {
 
-    private String namespace;
-    private HashMap<String, Double> sources;
-    private Map.Entry<String, Double> currentSource;
+    private final String namespace;
+    private final HashMap<String, RepSource> sources;
+    private RepSource currentSource;
 
-    public DynamicRepSource(String namespace, List<String> sources) {
-        this.namespace = namespace;
+    public DynamicRepSource(ConfigurationSection data) {
+        this.namespace = data.getName();
 
         this.sources = new HashMap<>();
-        for (String source : sources) {
-            String[] pair = source.split(":");
-            String trigger = pair[0].toUpperCase();
-            this.sources.put(trigger, Double.parseDouble(pair[1]));
+        for (String key : data.getKeys(false)) {
+            ConfigurationSection repSourceConfig = data.getConfigurationSection(key);
+            if (repSourceConfig == null) continue;
+            sources.put(repSourceConfig.getName(), new RepSource(repSourceConfig));
         }
 
     }
@@ -26,18 +26,16 @@ public class DynamicRepSource {
 
     }
 
-    public Map.Entry<String, Double> next() {
-        Set<Map.Entry<String, Double>> pairs = sources.entrySet();
+    public RepSource next() {
+        List<RepSource> repSources = new ArrayList<>(sources.values());
 
         Random rand = new Random();
 
-        List<Map.Entry<String, Double>> pairsList = new ArrayList<>(pairs);
-
-        currentSource = pairsList.get(rand.nextInt(pairs.size()-1));
+        currentSource = repSources.get(rand.nextInt(repSources.size()-1));
         return currentSource;
     }
 
-    public Map.Entry<String, Double> getCurrentSource() {
+    public RepSource getCurrentSource() {
         return currentSource;
     }
 

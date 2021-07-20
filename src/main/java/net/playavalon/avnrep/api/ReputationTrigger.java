@@ -2,6 +2,7 @@ package net.playavalon.avnrep.api;
 
 import net.playavalon.avnrep.data.player.AvalonPlayer;
 import net.playavalon.avnrep.data.player.Reputation;
+import net.playavalon.avnrep.data.reputation.RepSource;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.jetbrains.annotations.NotNull;
@@ -47,10 +48,11 @@ public abstract class ReputationTrigger implements Listener {
     private boolean updateRep(@NotNull Reputation rep, @NotNull String query) {
 
         if (plugin.config.getBoolean("Debug", false)) System.out.println(debugPrefix + "Checking " + rep.getFaction().getName() + " for " + query + "...");
-        HashMap<String, Double> sources = rep.getRepSources();
+        HashMap<String, RepSource> sources = rep.getRepSources();
         if (sources.containsKey(query)) {
+            RepSource source = sources.get(query);
             if (plugin.config.getBoolean("Debug", false)) System.out.println(debugPrefix + "Found!");
-            rep.addRepValue(sources.get(query), query);
+            rep.addRepValue(source.getValue(), query);
             return true;
         }
         return false;

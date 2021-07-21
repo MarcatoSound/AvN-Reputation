@@ -6,18 +6,23 @@ import net.playavalon.avnitems.utility.Util;
 import net.playavalon.avnrep.data.reputation.Faction;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
+import org.bukkit.persistence.PersistentDataContainer;
+import org.bukkit.persistence.PersistentDataType;
 
 import java.sql.Timestamp;
 import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static net.playavalon.avnitems.AvalonItems.debugPrefix;
+import static net.playavalon.avnrep.AvNRep.debugPrefix;
+import static net.playavalon.avnrep.AvNRep.plugin;
 
 public final class Utils {
 
@@ -182,6 +187,23 @@ public final class Utils {
             default:
                 return "unknown";
         }
+    }
+
+    public static String getNamespace(ItemStack item) {
+        if (plugin.avni == null) return "";
+
+        ItemMeta meta = item.getItemMeta();
+        if (meta == null) return "";
+        PersistentDataContainer data = meta.getPersistentDataContainer();
+        NamespacedKey key;
+        key = new NamespacedKey(plugin.avni, "namespace");
+
+
+        if (!data.has(key, PersistentDataType.STRING)) return "";
+        String namespace = data.get(key, PersistentDataType.STRING);
+
+        return namespace;
+
     }
 
 }

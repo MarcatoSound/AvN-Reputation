@@ -14,12 +14,15 @@ import net.playavalon.avnrep.data.player.Reputation;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.sql.Timestamp;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static net.playavalon.avnrep.AvNRep.debugPrefix;
 import static net.playavalon.avnrep.AvNRep.plugin;
@@ -249,6 +252,95 @@ public class Faction {
 
         });
 
+        initSellGUI();
+
+    }
+
+    private void initSellGUI() {
+        Window gui = new Window("sellto_" + namespace, 18, "&1Sell To " + displayName);
+        gui.setCancelClick(false);
+
+        Button button = new Button("sell_" + namespace, Material.LIME_STAINED_GLASS_PANE, "&a&lSELL");
+        button.addAction("sell", event -> {
+            event.setCancelled(true);
+            Player player = (Player)event.getWhoClicked();
+
+            sellItems(gui, player);
+            player.closeInventory();
+        });
+        gui.addButton(17, button);
+    }
+    private void sellItems(Window gui, Player player) {
+        AvalonPlayer aPlayer = plugin.getAvalonPlayer(player);
+        Reputation rep = aPlayer.getReputation(namespace);
+        GUIInventory playerGui = gui.getPlayersGui(player);
+        Inventory inv = playerGui.getInv();
+
+        List<String> sellables = getSellables();
+        for (int slot = 0; slot < 17; slot++) {
+
+            String trigger;
+
+            ItemStack item = inv.getItem(slot);
+            if (item == null || item.getType() == Material.AIR) continue;
+
+            Material mat = item.getType();
+            String itemNamespace = Utils.getNamespace(item);
+
+            int totalRemoved = 0;
+            if (sellables.contains(mat.toString())) {
+                // We found a vanilla material! Clean it out.
+                trigger = "SELL_" + mat;
+                for (ItemStack targetItem : inv.getContents()) {
+                    if (targetItem == null || targetItem.getType() == Material.AIR) continue;
+                    if (targetItem.getType() != mat) continue;
+                    totalRemoved += targetItem.getAmount();
+                    inv.remove(targetItem);
+                }
+
+                player.sendMessage(Utils.colorize(debugPrefix + "&aYou sold &b" + totalRemoved + " " + mat));
+
+                rep.addRepValue(repSources.get(trigger).getValue() * totalRemoved, trigger);
+
+            } else if (sellables.contains(itemNamespace)) {
+                // We found an Avalon item! Clean it out.
+                trigger = "SELL_" + itemNamespace;
+                for (ItemStack targetItem : inv.getContents()) {
+                    if (targetItem == null || targetItem.getType() == Material.AIR) continue;
+                    String targetItemNamespace = Utils.getNamespace(targetItem);
+                    if (!targetItemNamespace.equals(itemNamespace)) continue;
+                    totalRemoved += targetItem.getAmount();
+                    inv.remove(targetItem);
+                }
+
+                player.sendMessage(Utils.colorize(debugPrefix + "&aYou sold &b" + totalRemoved + " " + itemNamespace));
+
+
+                rep.addRepValue(repSources.get(trigger).getValue() * totalRemoved, trigger);
+
+            }
+
+        }
+    }
+    private List<String> getSellables() {
+        List<String> sellables = new ArrayList<>();
+        for (RepSource source : repSources.values()) {
+            String trigger = source.getTrigger();
+            if (!trigger.contains("SELL")) continue;
+
+            Pattern pattern = Pattern.compile("(SELL_(.*))");
+            Matcher matcher = pattern.matcher(trigger);
+            if (!matcher.find()) continue;
+
+            String itemName = matcher.group(2);
+            Material mat = Material.matchMaterial(itemName);
+            if (mat == null)
+                sellables.add(itemName.toLowerCase(Locale.ROOT));
+            else
+                sellables.add(itemName.toUpperCase(Locale.ROOT));
+        }
+
+        return sellables;
     }
 
 

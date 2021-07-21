@@ -260,6 +260,16 @@ public final class AvNRep extends JavaPlugin {
                         avnAPI.openGUIGroup(player, "shop_" + args[2]);
                         break;
 
+                    case "sell":
+                        if (!Utils.hasPermission(sender, "avnrep.admin")) return false;
+                        if (!(sender instanceof Player)) return false;
+                        if (args.length != 2) return false;
+                        player = (Player)sender;
+
+                        avnAPI.openGUI(player, "sellto_" + args[1]);
+
+                        break;
+
                     case "updatesources":
                         if (!Utils.hasPermission(sender, "avnrep.admin")) return false;
                         for (Faction faction : repManager.getValues()) {

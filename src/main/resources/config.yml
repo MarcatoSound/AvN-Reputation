@@ -9,8 +9,10 @@ Database:
 ReputationFactions:
   # The unique name of a reputation faction.
   example:
-    # The display name of the faction in commands and GUIs
+    # The display name of the faction in commands and GUIs.
     DisplayName: "&7Example"
+    # The item displayed for this faction in the '/reputation' menu. Supports Avalon Items.
+    IconItem: EMERALD
     # The maximum reputation level a player can get with this faction.
     MaxLevel: 20
     # The minimum amount of reputation required to level up the first time.
@@ -30,10 +32,48 @@ ReputationFactions:
     # A list of reputation sources that manipulate how the player gains or loses reputation with this faction.
     # Visit https://github.com/destradious/AvN-Reputation/wiki/Reputation-Sources-&-Triggers for available sources.
     Sources:
-      - KILL_ENDERMAN:5
-      - KILL_MONSTER:1
-      - BREAK_SPAWNER:100
-      - CRAFT_DIAMOND_SWORD:15
+      # A reputation trigger name
+      KILL_ENDERMAN:
+        # How much reputation will be gained upon completing this task. (Negative values are allowed.)
+        Reputation: 5
+        # The human-readable display name of this source in the faction info menu.
+        DisplayName: "&dKill Endermen"
+        # The item that will represent this source in the faction info menu. Supports Avalon Items.
+        IconItem: ENDER_PEARL
+      KILL_MONSTER:
+        Reputation: 1
+        DisplayName: "&cKill Hostile Monsters"
+        IconItem: mythrilingot
+      BREAK_SPAWNER:
+        Reputation: 100
+        DisplayName: "&cBreak Mob Spawners"
+        IconItem: SPAWNER
+    # A list of dynamic sources. Dynamic sources area collection of other sources that will randomly be chosen.
+    # In this example, ItemList1 will randomly add one of the five CRAFT_[item] sources listed below on startup.
+    # Dynamic sources can also be force-updated with '/reputation updatesources'
+    DynamicSources:
+      # The name of this dynamic source. Must be unique, but can otherwise be whatever you like.
+      DiamondToolsSource:
+        CRAFT_DIAMOND_SHOVEL:
+          Reputation: 7
+          DisplayName: "&bCraft Diamond Shovels"
+          IconItem: DIAMOND_SHOVEL
+        CRAFT_DIAMOND_SWORD:
+          Reputation: 10
+          DisplayName: "&bCraft Diamond Sword"
+          IconItem: DIAMOND_SWORD
+        CRAFT_DIAMOND_HOE:
+          Reputation: 10
+          DisplayName: "&bCraft Diamond Hoe"
+          IconItem: DIAMOND_HOE
+        CRAFT_DIAMOND_PICKAXE:
+          Reputation: 13
+          DisplayName: "&bCraft Diamond Pickaxe"
+          IconItem: DIAMOND_PICKAXE
+        CRAFT_DIAMOND_AXE:
+          Reputation: 13
+          DisplayName: "&bCraft Diamond Axe"
+          IconItem: DIAMOND_AXE
     # Commands to execute when a player reaches a specific reputation level.
     Commands:
       # The commands that will fire when a player reaches this level. Use <player> for the player's display name.
@@ -49,4 +89,6 @@ ReputationFactions:
     LastLevelCost: 5000
     RepCurve: -0.65
     Sources:
-      - KILL_MONSTER:2
+      KILL_MONSTER:
+        Reputation: 2
+        DisplayName: "&cKill Hostile Monsters"

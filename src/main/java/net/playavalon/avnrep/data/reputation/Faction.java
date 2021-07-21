@@ -86,14 +86,17 @@ public class Faction {
             String itemName = data.getString("Currency.Item", "EMERALD");
             assert itemName != null;
             Material currencyMat = Material.matchMaterial(itemName);
-            System.out.println("Material: " + currencyMat);
 
-            // If AvNi is present...
-            if (plugin.avni != null) {
-                if (currencyMat != null) {
-                    currency = new ItemStack(currencyMat);
-                    currencyName = currencyMat.toString();
-                } else {
+            if (currencyMat != null) {
+
+                currency = new ItemStack(currencyMat);
+                currencyName = currencyMat.toString();
+
+            } else {
+
+                // If AvNi is present...
+                if (plugin.avni != null) {
+
                     AvalonItem aItem = plugin.avni.itemManager.getItem(itemName);
                     if (aItem != null) {
                         currency = aItem.item;
@@ -103,18 +106,16 @@ public class Faction {
                         currency = new ItemStack(Material.EMERALD);
                         currencyName = Material.EMERALD.toString();
                     }
-                }
-            } else {
-                if (currencyMat != null) {
-                    currency = new ItemStack(currencyMat);
-                    currencyName = currencyMat.toString();
-                }
-                else {
+
+                } else {
                     currency = new ItemStack(Material.EMERALD);
                     currencyName = Material.EMERALD.toString();
                 }
+
             }
+
             currencyRate = Math.max(data.getInt("Currency.CurrencyRate", 25), 1);
+
         }
 
 

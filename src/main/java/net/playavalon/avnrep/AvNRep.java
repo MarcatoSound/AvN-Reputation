@@ -168,6 +168,7 @@ public final class AvNRep extends JavaPlugin {
                         sender.sendMessage(Utils.fullColor("{#f5476d}Avalon Reputation - Version 1.0 Beta"));
                         return false;
                     case "checklevel":
+                        if (!Utils.hasPermission(sender, "avnrep.admin")) return false;
                         if (args.length != 3) return false;
                         Faction rep = repManager.get(args[1]);
                         if (rep == null) {
@@ -183,6 +184,7 @@ public final class AvNRep extends JavaPlugin {
                         sender.sendMessage(debugPrefix + Utils.colorize("&eRep level " + level + " cost: " + Utils.calcLevelCost(rep, level)));
                         break;
                     case "setrep":
+                        if (!Utils.hasPermission(sender, "avnrep.admin")) return false;
                         if (args.length != 4) return false;
                         target = Bukkit.getPlayer(args[1]);
                         if (target == null) {
@@ -202,6 +204,7 @@ public final class AvNRep extends JavaPlugin {
 
                         break;
                     case "addrep":
+                        if (!Utils.hasPermission(sender, "avnrep.admin")) return false;
                         if (args.length != 4) return false;
                         target = Bukkit.getPlayer(args[1]);
                         if (target == null) {
@@ -221,6 +224,7 @@ public final class AvNRep extends JavaPlugin {
 
                         break;
                     case "setlevel":
+                        if (!Utils.hasPermission(sender, "avnrep.admin")) return false;
                         if (args.length < 4) return false;
                         target = Bukkit.getPlayer(args[1]);
                         if (target == null) {
@@ -239,16 +243,20 @@ public final class AvNRep extends JavaPlugin {
                         playerRep.setRepLevel(level);
                         break;
 
-                    case "testgui":
-                        if (!(sender instanceof Player)) return false;
-                        player = (Player)sender;
-                        avnAPI.openGUIGroup(player, "shop_exampleshop");
+                    case "openshop":
+                        if (!Utils.hasPermission(sender, "avnrep.admin")) return false;
+                        if (args.length != 3) return false;
+                        player = Bukkit.getPlayer(args[1]);
+                        if (player == null) sender.sendMessage(debugPrefix + "No player by name '" + args[1] + "' found!");
+                        if (!shopManager.contains(args[2])) sender.sendMessage(debugPrefix + "No shop by name '" + args[2] + "' found!");
+                        avnAPI.openGUIGroup(player, "shop_" + args[2]);
                         break;
 
                     case "updatesources":
+                        if (!Utils.hasPermission(sender, "avnrep.admin")) return false;
                         for (Faction faction : repManager.getValues()) {
                             faction.randomizeDynamicSources();
-                            System.out.println(faction.toString());
+                            System.out.println(faction);
                         }
                         sender.sendMessage(debugPrefix + Utils.colorize("&aSuccessfully updated faction dynamic reputation sources! (Check console)"));
                         break;

@@ -65,5 +65,6 @@ public class FactionManager {
     public Collection<Faction> getValues() {
         return reputations.values();
     }
+    public boolean contains(String name) { return reputations.containsKey(name); }
 
 }

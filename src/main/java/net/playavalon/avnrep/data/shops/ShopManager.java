@@ -18,4 +18,6 @@ public class ShopManager {
         return shops.get(namespace);
     }
 
+    public boolean contains(String namespace) { return shops.containsKey(namespace); }
+
 }

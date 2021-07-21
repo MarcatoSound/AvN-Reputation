@@ -72,7 +72,13 @@ public class ShopItem {
 
     public void purchase(Player player) {
 
-        if (canPlayerPurchase(player)) Utils.giveOrDrop(player, item);
+        if (canPlayerPurchase(player)) {
+            Utils.giveOrDrop(player, item);
+            Faction faction = shop.getFaction();
+            ItemStack itemCost = faction.getCurrency().clone();
+            itemCost.setAmount(cost);
+            player.getInventory().removeItem(itemCost);
+        }
 
     }
 
@@ -86,7 +92,7 @@ public class ShopItem {
             return false;
         }
 
-        if (!player.getInventory().contains(faction.getCurrency(), faction.getCurrencyRate())) {
+        if (!player.getInventory().containsAtLeast(faction.getCurrency(), cost)) {
             player.sendMessage(Utils.colorize(debugPrefix + "&cYou do not have enough &b" + faction.getCurrencyName() + " &cto purchase this!"));
             return false;
         }

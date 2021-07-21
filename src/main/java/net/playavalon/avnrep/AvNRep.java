@@ -1,11 +1,13 @@
 package net.playavalon.avnrep;
 
+import io.lumine.xikage.mythicmobs.MythicMobs;
 import net.playavalon.avncombatspigot.AvalonCombat;
 import net.playavalon.avngui.AvnAPI;
 import net.playavalon.avngui.AvnGUI;
 import net.playavalon.avnitems.AvalonItems;
 import net.playavalon.avnrep.api.ReputationAPI;
 import net.playavalon.avnrep.data.shops.ShopManager;
+import net.playavalon.avnrep.mythic.MythicListener;
 import net.playavalon.avnrep.triggers.*;
 import net.playavalon.avnrep.data.player.AvalonPlayer;
 import net.playavalon.avnrep.data.AvalonPlayerManager;
@@ -48,6 +50,7 @@ public final class AvNRep extends JavaPlugin {
     // Avalon plugin booleans
     public AvalonItems avni;
     public AvalonCombat avnc;
+    public MythicMobs mm;
 
     @Override
     public void onEnable() {
@@ -73,12 +76,17 @@ public final class AvNRep extends JavaPlugin {
                 }
 
                 if (Bukkit.getPluginManager().getPlugin("AvNItems") != null) {
-                    System.out.println(debugPrefix + "Found AvNItems plugins! Enabling compatibility...");
+                    System.out.println(debugPrefix + "Found AvNItems plugin! Enabling compatibility...");
                     avni = (AvalonItems)Bukkit.getPluginManager().getPlugin("AvNItems");
                 }
                 if (Bukkit.getPluginManager().getPlugin("AvNCombat") != null) {
-                    System.out.println(debugPrefix + "Found AvNCombat plugins! Enabling compatibility...");
+                    System.out.println(debugPrefix + "Found AvNCombat plugin! Enabling compatibility...");
                     avnc = (AvalonCombat)Bukkit.getPluginManager().getPlugin("AvNCombat");
+                }
+                if (Bukkit.getPluginManager().getPlugin("MythicMobs") != null) {
+                    System.out.println(debugPrefix + "Found MythicMobs plugin! Enabling compatibility...");
+                    mm = (MythicMobs)Bukkit.getPluginManager().getPlugin("MythicMobs");
+                    Bukkit.getPluginManager().registerEvents(new MythicListener(), plugin);
                 }
 
                 repManager = new FactionManager();

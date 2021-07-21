@@ -1,6 +1,10 @@
 package net.playavalon.avnrep.data.reputation;
 
+import net.playavalon.avngui.GUI.Buttons.Button;
+import net.playavalon.avngui.GUI.Window;
+import net.playavalon.avngui.GUI.WindowGroup;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.entity.Player;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -22,6 +26,30 @@ public class FactionManager {
         for (String rep : reps) {
             Faction repObj = new Faction(configSec.getConfigurationSection(rep));
             reputations.put(repObj.getName(), repObj);
+        }
+
+        initGui();
+    }
+
+    private void initGui() {
+        Window gui = new Window("factionlist", 27, "&1Reputation Factions");
+        Button button;
+
+        int i = 0;
+        for (Faction faction : reputations.values()) {
+
+            button = new Button("factionlist_" + faction.getName(), faction.getDisplayIcon());
+            button.setDisplayName(faction.getDisplayName());
+
+            button.addAction("click", event -> {
+                Player player = (Player)event.getWhoClicked();
+                plugin.avnAPI.openGUI(player, "factioninfo_" + faction.getName());
+            });
+
+            gui.addButton(i, button);
+
+            i++;
+
         }
     }
 

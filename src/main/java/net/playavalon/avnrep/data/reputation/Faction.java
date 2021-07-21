@@ -1,12 +1,21 @@
 package net.playavalon.avnrep.data.reputation;
 
+import net.playavalon.avngui.GUI.Buttons.Button;
+import net.playavalon.avngui.GUI.GUIInventory;
+import net.playavalon.avngui.GUI.Window;
+import net.playavalon.avngui.GUI.WindowGroup;
+import net.playavalon.avngui.GUI.WindowGroupManager;
 import net.playavalon.avnitems.AvalonItems;
 import net.playavalon.avnitems.database.AvalonItem;
 import net.playavalon.avnitems.utility.ItemUtils;
 import net.playavalon.avnrep.Utils;
+import net.playavalon.avnrep.data.player.AvalonPlayer;
+import net.playavalon.avnrep.data.player.Reputation;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.sql.Timestamp;
@@ -19,6 +28,7 @@ public class Faction {
 
     private String namespace;
     private String displayName;
+    private ItemStack displayIcon;
 
     private double minRep;
     private double maxRep;
@@ -37,28 +47,52 @@ public class Faction {
     private BukkitRunnable dynamicSourceCycle;
     private long currentDate;
 
-    public Faction(ConfigurationSection config) {
-        if (config == null) return;
-        namespace = config.getName().toLowerCase();
-        displayName = config.getString("DisplayName", namespace);
-        minRep = config.getDouble("FirstLevelCost", 25);
-        maxRep = config.getDouble("LastLevelCost", 5000);
-        maxLevel = config.getInt("MaxLevel", 20);
-        curve = config.getDouble("RepCurve", -0.5);
+    public Faction(ConfigurationSection data) {
+        if (data == null) return;
+        namespace = data.getName().toLowerCase();
+        displayName = data.getString("DisplayName", namespace);
+        minRep = data.getDouble("FirstLevelCost", 25);
+        maxRep = data.getDouble("LastLevelCost", 5000);
+        maxLevel = data.getInt("MaxLevel", 20);
+        curve = data.getDouble("RepCurve", -0.5);
+
+        Material mat;
+        if (plugin.avni != null) {
+
+            AvalonItem aItem = plugin.avni.itemManager.getItem(data.getString("IconItem"));
+            if (aItem == null) {
+                mat = Material.matchMaterial(data.getString("IconItem", "BLUE_STAINED_GLASS_PANE"));
+                if (mat == null) mat = Material.BLUE_STAINED_GLASS_PANE;
+                displayIcon = new ItemStack(mat);
+            } else {
+                displayIcon = new ItemStack(aItem.item.getType());
+                ItemMeta meta = displayIcon.getItemMeta();
+                meta.setCustomModelData(aItem.getCustomModelData());
+
+                displayIcon.setItemMeta(meta);
+            }
+
+        } else {
+
+            mat = Material.matchMaterial(data.getString("IconItem", "BLUE_STAINED_GLASS_PANE"));
+            if (mat == null) mat = Material.BLUE_STAINED_GLASS_PANE;
+            displayIcon = new ItemStack(mat);
+
+        }
 
         // Faction currency handling
-        currencyEnabled = config.getBoolean("Currency.Enabled", false);
+        currencyEnabled = data.getBoolean("Currency.Enabled", false);
         if (currencyEnabled) {
-            String itemName = config.getString("Currency.Item", "EMERALD");
+            String itemName = data.getString("Currency.Item", "EMERALD");
             assert itemName != null;
-            Material mat = Material.matchMaterial(itemName);
-            System.out.println("Material: " + mat);
+            Material currencyMat = Material.matchMaterial(itemName);
+            System.out.println("Material: " + currencyMat);
 
             // If AvNi is present...
             if (plugin.avni != null) {
-                if (mat != null) {
-                    currency = new ItemStack(mat);
-                    currencyName = mat.toString();
+                if (currencyMat != null) {
+                    currency = new ItemStack(currencyMat);
+                    currencyName = currencyMat.toString();
                 } else {
                     AvalonItem aItem = plugin.avni.itemManager.getItem(itemName);
                     if (aItem != null) {
@@ -71,20 +105,21 @@ public class Faction {
                     }
                 }
             } else {
-                if (mat != null) {
-                    currency = new ItemStack(mat);
-                    currencyName = mat.toString();
+                if (currencyMat != null) {
+                    currency = new ItemStack(currencyMat);
+                    currencyName = currencyMat.toString();
                 }
                 else {
                     currency = new ItemStack(Material.EMERALD);
                     currencyName = Material.EMERALD.toString();
                 }
             }
-            currencyRate = Math.max(config.getInt("Currency.CurrencyRate", 25), 1);
+            currencyRate = Math.max(data.getInt("Currency.CurrencyRate", 25), 1);
         }
 
+
         repSources = new HashMap<>();
-        ConfigurationSection repSourceConfigs = config.getConfigurationSection("Sources");
+        ConfigurationSection repSourceConfigs = data.getConfigurationSection("Sources");
         if (repSourceConfigs != null) {
             for (String key : repSourceConfigs.getKeys(false)) {
                 ConfigurationSection repSourceConfig = repSourceConfigs.getConfigurationSection(key);
@@ -94,7 +129,7 @@ public class Faction {
         }
 
         dynamicSources = new ArrayList<>();
-        ConfigurationSection dynRepConfig = config.getConfigurationSection("DynamicSources");
+        ConfigurationSection dynRepConfig = data.getConfigurationSection("DynamicSources");
         if (dynRepConfig != null) {
             for (String key : dynRepConfig.getKeys(false)) {
                 ConfigurationSection dynSourceConfig = dynRepConfig.getConfigurationSection(key);
@@ -120,8 +155,9 @@ public class Faction {
 
         randomizeDynamicSources();
 
+
         levelCommands = new HashMap<>();
-        ConfigurationSection levels = config.getConfigurationSection("Commands");
+        ConfigurationSection levels = data.getConfigurationSection("Commands");
         if (levels != null) {
             List<String> commands;
             for (String path : levels.getKeys(false)) {
@@ -131,7 +167,86 @@ public class Faction {
             }
         }
 
+
+        initGui();
+
+
         System.out.println(this);
+
+    }
+
+    private void initGui() {
+        Window gui = new Window("factioninfo_" + namespace, 27, displayName + " Reputation");
+        Button button;
+
+        // Top-Row blank slot setup
+        button = new Button("blank", Material.GRAY_STAINED_GLASS_PANE, "");
+        for (int i = 0; i < 9; i++) {
+            if (i != 3 && i != 5) gui.addButton(i, button);
+        }
+
+        // Back button
+        button = new Button(namespace + "_back", Material.RED_STAINED_GLASS_PANE, "&cBack");
+        button.addAction("back", event -> {
+            Player player = (Player)event.getWhoClicked();
+            plugin.avnAPI.openGUI(player, "factionlist");
+        });
+        gui.addButton(3, button);
+
+        // General info slot setup
+        button = new Button(namespace + "_info", Material.MAP, displayName + " Info");
+        gui.addButton(5, button);
+
+
+        // Reputation source display setup
+        gui.addOpenAction("loadsources", event -> {
+            Player player = (Player)event.getPlayer();
+
+            GUIInventory playerGui = gui.getPlayersGUI(player);
+            if (playerGui == null) return;
+
+            int i = 9;
+            for (RepSource source : repSources.values()) {
+                Button sourceButton = gui.getButtons().get(i);
+                if (sourceButton == null) sourceButton = new Button(namespace + "_" + source.getTrigger(), source.getDisplayIcon());
+                sourceButton.setDisplayName(source.getDisplayName());
+                sourceButton.clearLore();
+                sourceButton.addLore(Utils.colorize("&aReputation: " + (int)source.getValue()));
+                sourceButton.addLore(Utils.colorize("&8------------------"));
+                sourceButton.addLore(source.getDescription());
+
+                playerGui.setButton(i, sourceButton);
+                i++;
+            }
+
+            gui.updateButtons(player);
+        });
+
+
+        // Info button player data
+        gui.addOpenAction("updateinfo", event -> {
+
+            Player player = (Player)event.getPlayer();
+            AvalonPlayer aPlayer = plugin.getAvalonPlayer(player);
+            Reputation rep = aPlayer.getReputation(namespace);
+
+            Button infoButton = gui.editPlayersButton(player, 5);
+            infoButton.clearLore();
+            infoButton.addLore(Utils.colorize("&a&lLevel: &b" + rep.getRepLevel()));
+            infoButton.addLore(Utils.colorize("&aReputation EXP: &b" + (int)rep.getRepValue()));
+            infoButton.addLore(Utils.colorize("&aTotal EXP Needed: &b" + (int)Utils.calcLevelCost(this, rep.getRepLevel()+1)));
+
+            infoButton.addLore(Utils.colorize("&8------------------"));
+
+            infoButton.addLore(Utils.colorize("&aMax Level: &b" + maxLevel));
+            if (currencyEnabled) {
+                infoButton.addLore(Utils.colorize("&aCurrency: &b" + currencyName));
+                infoButton.addLore(Utils.colorize("&aEXP Per Currency: &b" + currencyRate));
+            }
+
+            gui.updateButtons(player);
+
+        });
 
     }
 
@@ -159,6 +274,9 @@ public class Faction {
     }
     public String getDisplayName() {
         return Utils.colorize(displayName);
+    }
+    public ItemStack getDisplayIcon() {
+        return displayIcon;
     }
     public double getMinRep() {
         return minRep;

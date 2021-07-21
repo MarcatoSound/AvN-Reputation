@@ -149,13 +149,14 @@ public final class AvNRep extends JavaPlugin {
             case "reputation":
                 if (args.length == 0) {
                     if (sender instanceof Player) {
-                        ap = getAvalonPlayer((Player)sender);
-                        sender.sendMessage(ap.printReputation());
-                        return false;
+                        player = (Player)sender;
+                        avnAPI.openGUI(player, "factionlist");
+                        //ap = getAvalonPlayer((Player)sender);
+                        //sender.sendMessage(ap.printReputation());
                     } else {
                         sender.sendMessage(Utils.fullColor("{#f5476d}Avalon Reputation - Version 1.0 Beta"));
-                        return false;
                     }
+                    return false;
                 }
 
                 Reputation playerRep;

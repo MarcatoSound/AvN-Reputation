@@ -134,7 +134,7 @@
         <dependency>
             <groupId>net.playavalon</groupId>
             <artifactId>AvN_Combat</artifactId>
-            <version>0.30.08</version>
+            <version>0.37</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -151,7 +151,7 @@
         <dependency>
             <groupId>net.playavalon</groupId>
             <artifactId>AvnGUI</artifactId>
-            <version>0.1.17</version>
+            <version>0.1.20</version>
         </dependency>
     </dependencies>
 </project>

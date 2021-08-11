@@ -47,6 +47,7 @@ public abstract class ReputationTrigger implements Listener {
      */
     private boolean updateRep(@NotNull Reputation rep, @NotNull String query) {
 
+        if (!rep.getFaction().isEnabled()) return false;
         if (plugin.config.getBoolean("Debug", false)) System.out.println(debugPrefix + "Checking " + rep.getFaction().getName() + " for " + query + "...");
         HashMap<String, RepSource> sources = rep.getRepSources();
         if (sources.containsKey(query)) {

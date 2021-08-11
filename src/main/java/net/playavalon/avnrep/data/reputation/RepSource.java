@@ -17,6 +17,7 @@ public class RepSource {
     // Critical details
     private final String trigger;
     private Double value;
+    private Double qualityBonus;
 
     // Display details
     private String displayName;
@@ -26,6 +27,7 @@ public class RepSource {
     public RepSource(ConfigurationSection data) {
         trigger = data.getName();
         value = data.getDouble("Reputation", 1);
+        qualityBonus = data.getDouble("QualityBonus", 0);
 
         displayName = Utils.colorize(data.getString("DisplayName", trigger));
 
@@ -79,5 +81,9 @@ public class RepSource {
 
     public ItemStack getDisplayIcon() {
         return displayIcon;
+    }
+
+    public Double getQualityBonus() {
+        return qualityBonus;
     }
 }

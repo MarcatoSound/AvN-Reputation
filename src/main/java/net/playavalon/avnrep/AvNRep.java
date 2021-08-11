@@ -260,14 +260,13 @@ public final class AvNRep extends JavaPlugin {
                         avnAPI.openGUIGroup(player, "shop_" + args[2]);
                         break;
 
-                    case "sell":
+                    case "sellgui":
                         if (!Utils.hasPermission(sender, "avnrep.admin")) return false;
-                        if (!(sender instanceof Player)) return false;
-                        if (args.length != 2) return false;
-                        player = (Player)sender;
-
-                        avnAPI.openGUI(player, "sellto_" + args[1]);
-
+                        if (args.length != 3) return false;
+                        player = Bukkit.getPlayer(args[1]);
+                        if (player == null) sender.sendMessage(debugPrefix + "No player by name '" + args[1] + "' found!");
+                        if (!repManager.contains(args[2])) sender.sendMessage(debugPrefix + "No faction by name '" + args[2] + "' found!");
+                        avnAPI.openGUI(player, "sellto_" + args[2]);
                         break;
 
                     case "updatesources":
@@ -280,6 +279,7 @@ public final class AvNRep extends JavaPlugin {
                         break;
 
                     default:
+                        if (!Utils.hasPermission(sender, "avnrep.admin")) return false;
                         target = Bukkit.getPlayer(args[0]);
                         if (target == null) {
                             sender.sendMessage(debugPrefix + Utils.colorize("&cCould not find player by the name " + args[0]));

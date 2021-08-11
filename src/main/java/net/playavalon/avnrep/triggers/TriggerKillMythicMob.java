@@ -1,8 +1,10 @@
 package net.playavalon.avnrep.triggers;
 
+import io.lumine.xikage.mythicmobs.adapters.AbstractEntity;
 import io.lumine.xikage.mythicmobs.api.bukkit.events.MythicMobDeathEvent;
 import io.lumine.xikage.mythicmobs.mobs.MythicMob;
 import net.playavalon.avnrep.api.ReputationTrigger;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 
@@ -14,11 +16,14 @@ public class TriggerKillMythicMob extends ReputationTrigger {
 
     @EventHandler
     public void onKillMythic(MythicMobDeathEvent e) {
-        if (!(e.getKiller() instanceof Player)) return;
-        Player player = (Player)e.getKiller();
-
         MythicMob mob = e.getMobType();
+        for (AbstractEntity aEnt : e.getMob().getThreatTable().getAllThreatTargets()) {
+            Entity ent = aEnt.getBukkitEntity();
+            if (!(ent instanceof Player)) continue;
 
-        updateRep(player, mob.getInternalName());
+            Player player = (Player) ent;
+
+            updateRep(player, mob.getInternalName());
+        }
     }
 }

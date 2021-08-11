@@ -1,6 +1,7 @@
 package net.playavalon.avnrep;
 
 import net.md_5.bungee.api.ChatColor;
+import net.playavalon.avnitems.AvalonItems;
 import net.playavalon.avnitems.utility.StringUtils;
 import net.playavalon.avnitems.utility.Util;
 import net.playavalon.avnrep.data.reputation.Faction;
@@ -203,6 +204,19 @@ public final class Utils {
         String namespace = data.get(key, PersistentDataType.STRING);
 
         return namespace;
+
+    }
+
+    public static int getQuality(ItemStack item) {
+
+        ItemMeta meta = item.getItemMeta();
+        if (meta == null) return -1;
+        PersistentDataContainer data = meta.getPersistentDataContainer();
+        NamespacedKey key = new NamespacedKey(AvalonItems.plugin, "quality");
+
+        if (!data.has(key, PersistentDataType.INTEGER)) return 0;
+
+        return data.get(key, PersistentDataType.INTEGER);
 
     }
 

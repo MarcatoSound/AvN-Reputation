@@ -32,6 +32,7 @@ public class Faction {
     private String namespace;
     private String displayName;
     private ItemStack displayIcon;
+    private boolean enabled;
 
     private double minRep;
     private double maxRep;
@@ -54,6 +55,7 @@ public class Faction {
         if (data == null) return;
         namespace = data.getName().toLowerCase();
         displayName = data.getString("DisplayName", namespace);
+        enabled = data.getBoolean("Enabled", true);
         minRep = data.getDouble("FirstLevelCost", 25);
         maxRep = data.getDouble("LastLevelCost", 5000);
         maxLevel = data.getInt("MaxLevel", 20);
@@ -102,7 +104,7 @@ public class Faction {
 
                     AvalonItem aItem = plugin.avni.itemManager.getItem(itemName);
                     if (aItem != null) {
-                        currency = aItem.item;
+                        currency = aItem.getQualityItem(0);
                         currencyName = aItem.fullName;
                     }
                     else {
@@ -142,11 +144,11 @@ public class Faction {
             }
         }
 
-        currentDate = (System.currentTimeMillis() / 60000) / 1440;
+        currentDate = Calendar.getInstance().get(Calendar.DAY_OF_YEAR);
         dynamicSourceCycle = new BukkitRunnable() {
             @Override
             public void run() {
-                long newDate = (System.currentTimeMillis() / 60000) / 1440;
+                int newDate = Calendar.getInstance().get(Calendar.DAY_OF_YEAR);
                 if (currentDate == newDate) return;
                 currentDate = newDate;
 
@@ -206,7 +208,7 @@ public class Faction {
         gui.addOpenAction("loadsources", event -> {
             Player player = (Player)event.getPlayer();
 
-            GUIInventory playerGui = gui.getPlayersGUI(player);
+            GUIInventory playerGui = gui.getPlayersGui(player);
             if (playerGui == null) return;
 
             int i = 9;
@@ -266,6 +268,16 @@ public class Faction {
             Player player = (Player)event.getWhoClicked();
 
             sellItems(gui, player);
+            GUIInventory playerGui = gui.getPlayersGui(player);
+
+            Inventory guiInv = playerGui.getInv();
+            for (int i = 0; i < 17; i++) {
+                ItemStack item = guiInv.getItem(i);
+                if (item == null || item.getType() == Material.AIR) continue;
+                Utils.giveOrDrop(player, item);
+                guiInv.setItem(i, null);
+            }
+
             player.closeInventory();
         });
         gui.addButton(17, button);
@@ -286,6 +298,7 @@ public class Faction {
 
             Material mat = item.getType();
             String itemNamespace = Utils.getNamespace(item);
+            int itemQuality = Utils.getQuality(item);
 
             int totalRemoved = 0;
             if (sellables.contains(mat.toString())) {
@@ -298,7 +311,9 @@ public class Faction {
                     inv.remove(targetItem);
                 }
 
-                player.sendMessage(Utils.colorize(debugPrefix + "&aYou sold &b" + totalRemoved + " " + mat));
+                double totalRepGained = repSources.get(trigger).getValue() * totalRemoved;
+
+                player.sendMessage(Utils.colorize(debugPrefix + "&aYou sold &b" + totalRemoved + " " + mat + " &afor &6" + (int)totalRepGained + " &areputation EXP!"));
 
                 rep.addRepValue(repSources.get(trigger).getValue() * totalRemoved, trigger);
 
@@ -308,15 +323,22 @@ public class Faction {
                 for (ItemStack targetItem : inv.getContents()) {
                     if (targetItem == null || targetItem.getType() == Material.AIR) continue;
                     String targetItemNamespace = Utils.getNamespace(targetItem);
+                    int targetItemQuality = Utils.getQuality(targetItem);
                     if (!targetItemNamespace.equals(itemNamespace)) continue;
+                    if (targetItemQuality != itemQuality) continue;
                     totalRemoved += targetItem.getAmount();
                     inv.remove(targetItem);
                 }
 
-                player.sendMessage(Utils.colorize(debugPrefix + "&aYou sold &b" + totalRemoved + " " + itemNamespace));
+                RepSource source = repSources.get(trigger);
+                double repPerTurnin = source.getValue();
+                if (source.getQualityBonus() != 0) repPerTurnin += (itemQuality * source.getQualityBonus());
 
+                double totalRepGained = repPerTurnin * totalRemoved;
 
-                rep.addRepValue(repSources.get(trigger).getValue() * totalRemoved, trigger);
+                player.sendMessage(Utils.colorize(debugPrefix + "&aYou sold &b" + totalRemoved + " " + itemNamespace + " &afor &6" + (int)totalRepGained + " &areputation EXP!"));
+
+                rep.addRepValue(totalRepGained, trigger);
 
             }
 
@@ -436,5 +458,9 @@ public class Faction {
         }
 
         return sb.toString();
+    }
+
+    public boolean isEnabled() {
+        return enabled;
     }
 }

@@ -17,6 +17,8 @@ public class TriggerKillMythicMob extends ReputationTrigger {
     @EventHandler
     public void onKillMythic(MythicMobDeathEvent e) {
         MythicMob mob = e.getMobType();
+        if (e.getMob() == null) return;
+        if (e.getMob().getThreatTable() == null) return;
         for (AbstractEntity aEnt : e.getMob().getThreatTable().getAllThreatTargets()) {
             Entity ent = aEnt.getBukkitEntity();
             if (!(ent instanceof Player)) continue;

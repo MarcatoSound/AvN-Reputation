@@ -1,9 +1,7 @@
 package net.playavalon.avnrep;
 
-import net.playavalon.avnitems.gathering.GatheringPoint;
 import net.playavalon.avnrep.data.shops.ReputationShop;
 import org.apache.commons.io.FilenameUtils;
-import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;

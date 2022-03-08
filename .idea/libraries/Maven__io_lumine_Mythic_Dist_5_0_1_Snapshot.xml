@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: io.lumine:Mythic-Dist:5.0.1-Snapshot">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/io/lumine/Mythic-Dist/5.0.1-Snapshot/Mythic-Dist-5.0.1-Snapshot.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/io/lumine/Mythic-Dist/5.0.1-Snapshot/Mythic-Dist-5.0.1-Snapshot-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/io/lumine/Mythic-Dist/5.0.1-Snapshot/Mythic-Dist-5.0.1-Snapshot-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

@@ -1,7 +1,7 @@
 package net.playavalon.avnrep.mythic;
 
-import io.lumine.xikage.mythicmobs.api.bukkit.events.MythicMechanicLoadEvent;
-import io.lumine.xikage.mythicmobs.skills.SkillMechanic;
+import io.lumine.mythic.api.skills.ISkillMechanic;
+import io.lumine.mythic.bukkit.events.MythicMechanicLoadEvent;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
@@ -11,7 +11,7 @@ public class MythicListener implements Listener {
     public void onMythicMechanicEvent(MythicMechanicLoadEvent e) {
 
         if(e.getMechanicName().equalsIgnoreCase("REPUTATION") || e.getMechanicName().equalsIgnoreCase("REP"))	{
-            SkillMechanic mechanic = new ReputationMechanic(e.getConfig());
+            ISkillMechanic mechanic = new ReputationMechanic(e.getConfig());
             e.register(mechanic);
         }
 

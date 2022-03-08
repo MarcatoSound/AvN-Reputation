@@ -1,7 +1,5 @@
 package net.playavalon.avnrep.triggers;
 
-import io.lumine.xikage.mythicmobs.api.bukkit.events.MythicMobDeathEvent;
-import io.lumine.xikage.mythicmobs.mobs.MythicMob;
 import net.playavalon.avncombatspigot.api.PlayerChangeLevelEvent;
 import net.playavalon.avnrep.api.ReputationTrigger;
 import org.bukkit.entity.Player;

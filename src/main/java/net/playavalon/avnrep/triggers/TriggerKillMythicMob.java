@@ -1,8 +1,8 @@
 package net.playavalon.avnrep.triggers;
 
-import io.lumine.xikage.mythicmobs.adapters.AbstractEntity;
-import io.lumine.xikage.mythicmobs.api.bukkit.events.MythicMobDeathEvent;
-import io.lumine.xikage.mythicmobs.mobs.MythicMob;
+import io.lumine.mythic.api.adapters.AbstractEntity;
+import io.lumine.mythic.api.mobs.MythicMob;
+import io.lumine.mythic.bukkit.events.MythicMobDeathEvent;
 import net.playavalon.avnrep.api.ReputationTrigger;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;

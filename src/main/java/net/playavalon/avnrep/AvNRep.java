@@ -1,20 +1,20 @@
 package net.playavalon.avnrep;
 
-import io.lumine.xikage.mythicmobs.MythicMobs;
+import io.lumine.mythic.bukkit.MythicBukkit;
 import net.playavalon.avncombatspigot.AvalonCombat;
 import net.playavalon.avngui.AvnAPI;
 import net.playavalon.avngui.AvnGUI;
 import net.playavalon.avnitems.AvalonItems;
 import net.playavalon.avnrep.api.ReputationAPI;
-import net.playavalon.avnrep.data.shops.ShopManager;
-import net.playavalon.avnrep.mythic.MythicListener;
-import net.playavalon.avnrep.triggers.*;
-import net.playavalon.avnrep.data.player.AvalonPlayer;
 import net.playavalon.avnrep.data.AvalonPlayerManager;
 import net.playavalon.avnrep.data.OnlineSQLDatabase;
+import net.playavalon.avnrep.data.player.AvalonPlayer;
 import net.playavalon.avnrep.data.player.Reputation;
 import net.playavalon.avnrep.data.reputation.Faction;
 import net.playavalon.avnrep.data.reputation.FactionManager;
+import net.playavalon.avnrep.data.shops.ShopManager;
+import net.playavalon.avnrep.mythic.MythicListener;
+import net.playavalon.avnrep.triggers.*;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -50,7 +50,7 @@ public final class AvNRep extends JavaPlugin {
     // Avalon plugin booleans
     public AvalonItems avni;
     public AvalonCombat avnc;
-    public MythicMobs mm;
+    public MythicBukkit mm;
 
     @Override
     public void onEnable() {
@@ -85,7 +85,7 @@ public final class AvNRep extends JavaPlugin {
                 }
                 if (Bukkit.getPluginManager().getPlugin("MythicMobs") != null) {
                     System.out.println(debugPrefix + "Found MythicMobs plugin! Enabling compatibility...");
-                    mm = (MythicMobs)Bukkit.getPluginManager().getPlugin("MythicMobs");
+                    mm = (MythicBukkit) Bukkit.getPluginManager().getPlugin("MythicMobs");
                     Bukkit.getPluginManager().registerEvents(new MythicListener(), plugin);
                 }
 

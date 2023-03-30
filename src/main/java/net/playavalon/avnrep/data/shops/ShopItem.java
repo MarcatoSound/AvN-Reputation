@@ -74,8 +74,7 @@ public class ShopItem {
 
         if (canPlayerPurchase(player)) {
             Utils.giveOrDrop(player, item);
-            Faction faction = shop.getFaction();
-            ItemStack itemCost = faction.getCurrency().clone();
+            ItemStack itemCost = shop.getCurrency().clone();
             itemCost.setAmount(cost);
             player.getInventory().removeItem(itemCost);
         }
@@ -87,13 +86,16 @@ public class ShopItem {
         Faction faction = shop.getFaction();
         AvalonPlayer aPlayer = plugin.getAvalonPlayer(player);
 
-        if (aPlayer.getReputation(faction.getName()).getRepLevel() < minRepLevel) {
+        if (faction != null && aPlayer.getReputation(faction.getName()).getRepLevel() < minRepLevel) {
             player.sendMessage(Utils.colorize(debugPrefix + "&cYou must be at least reputation level &b" + minRepLevel + " &cto purchase this!"));
+            return false;
+        } else if (faction == null && aPlayer.getHighestRepLevel() < minRepLevel) {
+            player.sendMessage(Utils.colorize(debugPrefix + "&cYou must have a reputation level of at least &b" + minRepLevel + " &cto purchase this!"));
             return false;
         }
 
-        if (!player.getInventory().containsAtLeast(faction.getCurrency(), cost)) {
-            player.sendMessage(Utils.colorize(debugPrefix + "&cYou do not have enough &b" + faction.getCurrencyName() + " &cto purchase this!"));
+        if (!player.getInventory().containsAtLeast(shop.getCurrency(), cost)) {
+            player.sendMessage(Utils.colorize(debugPrefix + "&cYou do not have enough &b" + shop.getCurrencyName() + " &cto purchase this!"));
             return false;
         }
 

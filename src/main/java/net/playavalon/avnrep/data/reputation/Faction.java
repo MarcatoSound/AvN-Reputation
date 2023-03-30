@@ -3,11 +3,7 @@ package net.playavalon.avnrep.data.reputation;
 import net.playavalon.avngui.GUI.Buttons.Button;
 import net.playavalon.avngui.GUI.GUIInventory;
 import net.playavalon.avngui.GUI.Window;
-import net.playavalon.avngui.GUI.WindowGroup;
-import net.playavalon.avngui.GUI.WindowGroupManager;
-import net.playavalon.avnitems.AvalonItems;
 import net.playavalon.avnitems.database.AvalonItem;
-import net.playavalon.avnitems.utility.ItemUtils;
 import net.playavalon.avnrep.Utils;
 import net.playavalon.avnrep.data.player.AvalonPlayer;
 import net.playavalon.avnrep.data.player.Reputation;
@@ -19,7 +15,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.sql.Timestamp;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -44,7 +39,7 @@ public class Faction {
     private String currencyName;
     private int currencyRate;
 
-    private HashMap<String, RepSource> repSources;
+    private LinkedHashMap<String, RepSource> repSources;
     private ArrayList<DynamicRepSource> dynamicSources;
     private HashMap<Integer, List<String>> levelCommands;
 
@@ -124,7 +119,7 @@ public class Faction {
         }
 
 
-        repSources = new HashMap<>();
+        repSources = new LinkedHashMap<>();
         ConfigurationSection repSourceConfigs = data.getConfigurationSection("Sources");
         if (repSourceConfigs != null) {
             for (String key : repSourceConfigs.getKeys(false)) {
@@ -177,7 +172,7 @@ public class Faction {
         initGui();
 
 
-        System.out.println(this);
+        //System.out.println(this);
 
     }
 
@@ -217,7 +212,8 @@ public class Faction {
                 if (sourceButton == null) sourceButton = new Button(namespace + "_" + source.getTrigger(), source.getDisplayIcon());
                 sourceButton.setDisplayName(source.getDisplayName());
                 sourceButton.clearLore();
-                sourceButton.addLore(Utils.colorize("&aReputation: " + (int)source.getValue()));
+                sourceButton.addLore(Utils.colorize("&aReputation: " + Utils.round(source.getValue(), 2)));
+                if (source.getQualityBonus() > 0) sourceButton.addLore(Utils.colorize("&eQuality Bonus: " + Utils.round(source.getQualityBonus(), 2)));
                 sourceButton.addLore(Utils.colorize("&8------------------"));
                 sourceButton.addLore(source.getDescription());
 
@@ -376,7 +372,7 @@ public class Faction {
             // Update and retrieve a new reputation source
             RepSource source = dynamicSource.next();
 
-            System.out.println(debugPrefix + "- " + dynamicSource.getNamespace() + ": " + source.getTrigger());
+            //System.out.println(debugPrefix + "- " + dynamicSource.getNamespace() + ": " + source.getTrigger());
 
             // Register the new source with this faction
             repSources.put(source.getTrigger(), source);

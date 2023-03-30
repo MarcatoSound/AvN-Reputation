@@ -9,7 +9,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 
 import static net.playavalon.avnrep.AvNRep.debugPrefix;
@@ -46,6 +45,14 @@ public abstract class ReputationTrigger implements Listener {
      * @return True if the query was found. False if not.
      */
     private boolean updateRep(@NotNull Reputation rep, @NotNull String query) {
+        return updateRep(rep, query, 0);
+    }
+    /**
+     * @param rep The PlayerReputation we are checking.
+     * @param query The source/trigger label in the reputation config. (I.e. KILL_MONSTER)
+     * @return True if the query was found. False if not.
+     */
+    private boolean updateRep(@NotNull Reputation rep, @NotNull String query, int amount) {
 
         if (!rep.getFaction().isEnabled()) return false;
         if (plugin.config.getBoolean("Debug", false)) System.out.println(debugPrefix + "Checking " + rep.getFaction().getName() + " for " + query + "...");
@@ -53,7 +60,25 @@ public abstract class ReputationTrigger implements Listener {
         if (sources.containsKey(query)) {
             RepSource source = sources.get(query);
             if (plugin.config.getBoolean("Debug", false)) System.out.println(debugPrefix + "Found!");
-            rep.addRepValue(source.getValue(), query);
+            rep.addRepValue(source.getValue() + amount, query);
+            return true;
+        }
+        return false;
+    }
+    /**
+     * @param rep The PlayerReputation we are checking.
+     * @param query The source/trigger label in the reputation config. (I.e. KILL_MONSTER)
+     * @return True if the query was found. False if not.
+     */
+    private boolean updateRep(@NotNull Reputation rep, @NotNull String query, double mod) {
+
+        if (!rep.getFaction().isEnabled()) return false;
+        if (plugin.config.getBoolean("Debug", false)) System.out.println(debugPrefix + "Checking " + rep.getFaction().getName() + " for " + query + "...");
+        HashMap<String, RepSource> sources = rep.getRepSources();
+        if (sources.containsKey(query)) {
+            RepSource source = sources.get(query);
+            if (plugin.config.getBoolean("Debug", false)) System.out.println(debugPrefix + "Found!");
+            rep.addRepValue(source.getValue() * mod, query);
             return true;
         }
         return false;
@@ -80,7 +105,15 @@ public abstract class ReputationTrigger implements Listener {
      * @param extra A list of triggers to search for. (I.e. KILL_MONSTER, KILL_ANIMAL, etc.)
      */
     protected void updateRep(@NotNull Player player, @NotNull String specific, @NotNull String[] extra) {
-        // TODO Implement functionality for extras to contain the [] wildcard.
+        updateRep(player, specific, extra, 0);
+    }
+    /**
+     * @param player The player involved with this trigger.
+     * @param specific A specific identifier to use at the end of the trigger name (I.e. KILL_CREEPER, where CREEPER is the specific.)
+     * @param extra A list of triggers to search for. (I.e. KILL_MONSTER, KILL_ANIMAL, etc.)
+     * @param amount An amount of additional reputation to provide the player.
+     */
+    protected void updateRep(@NotNull Player player, @NotNull String specific, @NotNull String[] extra, int amount) {
         AvalonPlayer ap = plugin.getAvalonPlayer(player);
         if (ap == null) return;
 
@@ -92,33 +125,33 @@ public abstract class ReputationTrigger implements Listener {
 
         for (Reputation rep : ap.getAllReputations()) {
             for (String query : queries) {
-                if (updateRep(rep, query)) break;
+                if (updateRep(rep, query, amount)) break;
             }
         }
     }
-
     /**
      * @param player The player involved with this trigger.
      * @param specific A specific identifier to use at the end of the trigger name (I.e. KILL_CREEPER, where CREEPER is the specific.)
-     * @param extra One extra trigger to search for. (I.e. KILL_MONSTER, KILL_ANIMAL, etc.)
+     * @param extra A list of triggers to search for. (I.e. KILL_MONSTER, KILL_ANIMAL, etc.)
+     * @param mod An amount of additional reputation to provide the player.
      */
-    protected void updateRep(@NotNull Player player, @NotNull String specific, @NotNull String extra) {
-        // TODO Implement functionality for extras to contain the [] wildcard.
+    protected void updateRep(@NotNull Player player, @NotNull String specific, @NotNull String[] extra, double mod) {
         AvalonPlayer ap = plugin.getAvalonPlayer(player);
         if (ap == null) return;
 
         ArrayList<String> queries = new ArrayList<>();
 
         queries.add(this.getTriggerNameSpecific(specific));
-        queries.addAll(Collections.singletonList(extra));
+        queries.addAll(Arrays.asList(extra));
         queries.add(this.getTriggerNameClean());
 
         for (Reputation rep : ap.getAllReputations()) {
             for (String query : queries) {
-                if (updateRep(rep, query)) break;
+                if (updateRep(rep, query, mod)) break;
             }
         }
     }
+
     /**
      * @param player The player involved with this trigger.
      * @param specific A specific identifier to use at the end of the trigger name (I.e. KILL_CREEPER, where CREEPER is the specific.)

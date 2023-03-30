@@ -2,9 +2,9 @@ package net.playavalon.avnrep.data.reputation;
 
 import net.playavalon.avngui.GUI.Buttons.Button;
 import net.playavalon.avngui.GUI.Window;
-import net.playavalon.avngui.GUI.WindowGroup;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -59,6 +59,8 @@ public class FactionManager {
     public void remove(String name) {
         reputations.remove(name);
     }
+
+    @Nullable
     public Faction get(String name) {
         return reputations.get(name);
     }

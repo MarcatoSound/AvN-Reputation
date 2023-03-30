@@ -1,7 +1,8 @@
 package net.playavalon.avnrep.data.player;
 
+import lombok.Getter;
+import lombok.Setter;
 import net.playavalon.avnrep.Utils;
-import org.apache.commons.lang.WordUtils;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -17,8 +18,9 @@ import static net.playavalon.avnrep.AvNRep.plugin;
 
 public class AvalonPlayer {
 
-    private Player player;
+    @Getter @Setter private Player player;
     private ReputationManager reputationManager;
+    @Getter private boolean loaded = false;
 
     public AvalonPlayer(Player player) {
         this.player = player;
@@ -47,9 +49,14 @@ public class AvalonPlayer {
     public Collection<Reputation> getAllReputations() {
         return reputationManager.getReputations();
     }
+    public int getHighestRepLevel() {
 
-    public Player getPlayer() {
-        return player;
+        int highestLevel = 0;
+        for (Reputation rep : reputationManager.getReputations()) {
+            if (rep.getRepLevel() > highestLevel) highestLevel = rep.getRepLevel();
+        }
+
+        return highestLevel;
     }
 
     // Used to get the colour formatted reputation information for MC Chat
@@ -70,10 +77,12 @@ public class AvalonPlayer {
     //////
 
     public void loadPlayerData() {
+        if (loaded) return;
         if (plugin.dbEnabled) {
             // Database support is enabled; use SQL to save player data.
             try {
                 plugin.database.loadPlayerData(this);
+                loaded = true;
             } catch (SQLException e) {
                 System.out.println(debugPrefix + "Could not load player data!");
                 e.printStackTrace();
@@ -98,6 +107,8 @@ public class AvalonPlayer {
                     rep.setRepLevel(reputations.getInt(name + ".level"));
                     rep.initRepValue(reputations.getDouble(name + ".exp"));
                 }
+
+                loaded = true;
 
             } catch (InvalidConfigurationException | IOException ex) {
                 ex.printStackTrace();

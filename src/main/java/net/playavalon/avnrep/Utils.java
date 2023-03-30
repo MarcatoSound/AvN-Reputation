@@ -1,21 +1,22 @@
 package net.playavalon.avnrep;
 
 import net.md_5.bungee.api.ChatColor;
+import net.playavalon.avncombatspigot.AvalonCombat;
 import net.playavalon.avnitems.AvalonItems;
-import net.playavalon.avnitems.utility.StringUtils;
+import net.playavalon.avnitems.database.AvalonItem;
 import net.playavalon.avnitems.utility.Util;
 import net.playavalon.avnrep.data.reputation.Faction;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
+import org.jetbrains.annotations.Nullable;
 
 import java.sql.Timestamp;
 import java.util.Random;
@@ -219,5 +220,76 @@ public final class Utils {
         return data.get(key, PersistentDataType.INTEGER);
 
     }
+
+    public static int getMobLevel(Entity ent) {
+        PersistentDataContainer data = ent.getPersistentDataContainer();
+        NamespacedKey key = new NamespacedKey(AvalonCombat.plugin, "AvnLevel");
+
+        if (!data.has(key, PersistentDataType.INTEGER)) return 0;
+
+        return data.get(key, PersistentDataType.INTEGER);
+    }
+
+    public static ItemStack getItemFromNamespace(String itemName) {
+        ItemStack item;
+        Material currencyMat = Material.matchMaterial(itemName);
+
+        if (currencyMat != null) {
+
+            item = new ItemStack(currencyMat);
+
+        } else {
+
+            // If AvNi is present...
+            if (plugin.avni != null) {
+
+                AvalonItem aItem = plugin.avni.itemManager.getItem(itemName);
+                if (aItem != null) {
+                    item = aItem.getQualityItem(0);
+                }
+                else {
+                    item = new ItemStack(Material.STICK);
+                }
+
+            } else {
+                item = new ItemStack(Material.STICK);
+            }
+
+        }
+
+        return item;
+    }
+
+    @Nullable
+    public static String getItemDisplayName(String itemName) {
+        String name;
+        Material currencyMat = Material.matchMaterial(itemName);
+
+        if (currencyMat != null) {
+
+            name = currencyMat.toString();
+
+        } else {
+
+            // If AvNi is present...
+            if (plugin.avni != null) {
+
+                AvalonItem aItem = plugin.avni.itemManager.getItem(itemName);
+                if (aItem != null) {
+                    name = aItem.fullName;
+                }
+                else {
+                    name = null;
+                }
+
+            } else {
+                name = Material.STICK.toString();
+            }
+
+        }
+
+        return name;
+    }
+
 
 }

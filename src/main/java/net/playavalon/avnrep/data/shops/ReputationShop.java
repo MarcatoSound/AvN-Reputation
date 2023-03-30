@@ -1,15 +1,16 @@
 package net.playavalon.avnrep.data.shops;
 
 import com.google.common.collect.Lists;
+import lombok.Getter;
 import net.playavalon.avngui.GUI.Buttons.Button;
 import net.playavalon.avngui.GUI.Window;
 import net.playavalon.avngui.GUI.WindowGroup;
 import net.playavalon.avnrep.Utils;
-import net.playavalon.avnrep.data.player.AvalonPlayer;
-import net.playavalon.avnrep.data.player.Reputation;
 import net.playavalon.avnrep.data.reputation.Faction;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +24,10 @@ public class ReputationShop {
     private final String displayName;
     private final ArrayList<ShopItem> items;
 
-    private final Faction faction;
+    @Nullable private Faction faction;
+
+    @Getter private ItemStack currency;
+    @Getter private String currencyName;
 
     public ReputationShop(ConfigurationSection data) {
 
@@ -33,6 +37,12 @@ public class ReputationShop {
 
         faction = plugin.repManager.get(data.getString("Faction"));
         if (faction == null) System.out.println(debugPrefix + "WARNING :: Shop '" + namespace + "' does not have a faction!!");
+
+        currency = Utils.getItemFromNamespace(data.getString("Currency"));
+        if (currency == null && faction != null) currency = faction.getCurrency();
+
+        if (currency != null) currencyName = Utils.getItemDisplayName(data.getString("Currency"));
+
 
         ConfigurationSection shopItems = data.getConfigurationSection("Items");
         if (shopItems == null) {
@@ -74,7 +84,8 @@ public class ReputationShop {
                 button = new Button("shop_" + namespace + "_" + item.getNamespace(), item.getItem());
 
                 button.addLore(Utils.colorize("&8----------------------"));
-                button.addLore(Utils.colorize("&7Reputation Level: " + item.getMinRepLevel()));
+                button.addLore(Utils.colorize("&7Faction: " + (faction == null ? "&aAny" : faction.getDisplayName())));
+                if (item.getMinRepLevel() > 0) button.addLore(Utils.colorize("&7Reputation Level: " + item.getMinRepLevel()));
                 button.addLore(Utils.colorize("&7Cost: " + item.getCost()));
                 button.addLore(Utils.colorize(""));
 
@@ -108,6 +119,7 @@ public class ReputationShop {
         return items.get(index);
     }
 
+    @Nullable
     public Faction getFaction() {
         return faction;
     }

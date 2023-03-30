@@ -19,9 +19,10 @@ public final class AvalonPlayerManager {
     [ WRAPPERS ]
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
     public void put(Player player) {
-        AvalonPlayer ap = new AvalonPlayer(player);
+        AvalonPlayer ap = players.computeIfAbsent(player.getUniqueId(), uuid -> new AvalonPlayer(player));
+        ap.setPlayer(player);
         ap.loadPlayerData();
-        players.putIfAbsent(player.getUniqueId(), ap);
+        //players.putIfAbsent(player.getUniqueId(), ap);
     }
     public void remove(Player player) {
         players.remove(player.getUniqueId());

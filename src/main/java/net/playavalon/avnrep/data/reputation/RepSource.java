@@ -18,6 +18,7 @@ public class RepSource {
     private final String trigger;
     private Double value;
     private Double qualityBonus;
+    private double levelBonus;
 
     // Display details
     private String displayName;
@@ -28,6 +29,7 @@ public class RepSource {
         trigger = data.getName();
         value = data.getDouble("Reputation", 1);
         qualityBonus = data.getDouble("QualityBonus", 0);
+        levelBonus = data.getDouble("LevelBonus", 0);
 
         displayName = Utils.colorize(data.getString("DisplayName", trigger));
 

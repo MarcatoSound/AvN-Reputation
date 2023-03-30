@@ -2,7 +2,10 @@ package net.playavalon.avnrep.data.reputation;
 
 import org.bukkit.configuration.ConfigurationSection;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Random;
 
 public class DynamicRepSource {
 
@@ -31,7 +34,7 @@ public class DynamicRepSource {
 
         Random rand = new Random();
 
-        currentSource = repSources.get(rand.nextInt(repSources.size()-1));
+        currentSource = repSources.get(rand.nextInt(repSources.size()));
         return currentSource;
     }
 

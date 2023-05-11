@@ -7,14 +7,13 @@ import net.playavalon.avnrep.api.events.PlayerGainReputationLevelEvent;
 import net.playavalon.avnrep.api.events.PlayerLoseReputationEvent;
 import net.playavalon.avnrep.data.reputation.Faction;
 import net.playavalon.avnrep.data.reputation.RepSource;
-import org.apache.commons.lang.WordUtils;
+import org.apache.commons.text.WordUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 

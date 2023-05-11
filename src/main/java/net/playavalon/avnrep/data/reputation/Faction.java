@@ -5,6 +5,7 @@ import net.playavalon.avngui.GUI.GUIInventory;
 import net.playavalon.avngui.GUI.Window;
 import net.playavalon.avnitems.database.AvalonItem;
 import net.playavalon.avnrep.Utils;
+import net.playavalon.avnrep.compatibility.ScheduleAdapter;
 import net.playavalon.avnrep.data.player.AvalonPlayer;
 import net.playavalon.avnrep.data.player.Reputation;
 import org.bukkit.Material;
@@ -13,7 +14,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.*;
 import java.util.regex.Matcher;
@@ -42,8 +42,6 @@ public class Faction {
     private LinkedHashMap<String, RepSource> repSources;
     private ArrayList<DynamicRepSource> dynamicSources;
     private HashMap<Integer, List<String>> levelCommands;
-
-    private BukkitRunnable dynamicSourceCycle;
     private long currentDate;
 
     public Faction(ConfigurationSection data) {
@@ -140,7 +138,17 @@ public class Faction {
         }
 
         currentDate = Calendar.getInstance().get(Calendar.DAY_OF_YEAR);
-        dynamicSourceCycle = new BukkitRunnable() {
+        ScheduleAdapter.runTaskTimerAsync(() -> {
+            int newDate = Calendar.getInstance().get(Calendar.DAY_OF_YEAR);
+            if (currentDate == newDate) return;
+            currentDate = newDate;
+
+            System.out.println(debugPrefix + "Good morning! Updating dynamic reputation sources for factions...");
+
+            randomizeDynamicSources();
+        }, 0, 1200);
+
+        /*dynamicSourceCycle = new BukkitRunnable() {
             @Override
             public void run() {
                 int newDate = Calendar.getInstance().get(Calendar.DAY_OF_YEAR);
@@ -152,7 +160,7 @@ public class Faction {
                 randomizeDynamicSources();
             }
         };
-        dynamicSourceCycle.runTaskTimerAsynchronously(plugin, 0, 1200);
+        dynamicSourceCycle.runTaskTimerAsynchronously(plugin, 0, 1200);*/
 
         randomizeDynamicSources();
 

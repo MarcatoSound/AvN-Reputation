@@ -4,9 +4,14 @@ import io.lumine.mythic.api.adapters.AbstractEntity;
 import io.lumine.mythic.api.mobs.MythicMob;
 import io.lumine.mythic.bukkit.events.MythicMobDeathEvent;
 import net.playavalon.avnrep.api.ReputationTrigger;
+import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.persistence.PersistentDataContainer;
+import org.bukkit.persistence.PersistentDataType;
+
+import static net.playavalon.avncombatspigot.AvalonCombat.plugin;
 
 public class TriggerKillMythicMob extends ReputationTrigger {
 
@@ -22,6 +27,9 @@ public class TriggerKillMythicMob extends ReputationTrigger {
         for (AbstractEntity aEnt : e.getMob().getThreatTable().getAllThreatTargets()) {
             Entity ent = aEnt.getBukkitEntity();
             if (!(ent instanceof Player)) continue;
+
+            PersistentDataContainer data = ent.getPersistentDataContainer();
+            if (data.has(new NamespacedKey(plugin, "FromSpawner"), PersistentDataType.INTEGER)) return;
 
             Player player = (Player) ent;
 

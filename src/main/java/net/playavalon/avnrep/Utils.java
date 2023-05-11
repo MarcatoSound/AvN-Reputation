@@ -231,6 +231,7 @@ public final class Utils {
     }
 
     public static ItemStack getItemFromNamespace(String itemName) {
+        if (itemName == null) return null;
         ItemStack item;
         Material currencyMat = Material.matchMaterial(itemName);
 
@@ -262,6 +263,7 @@ public final class Utils {
 
     @Nullable
     public static String getItemDisplayName(String itemName) {
+        if (itemName == null) return "";
         String name;
         Material currencyMat = Material.matchMaterial(itemName);
 

@@ -1,6 +1,7 @@
 name: AvNRep
 version: ${project.version}
 main: net.playavalon.avnrep.AvNRep
+folia-supported: true
 api-version: 1.13
 prefix: AvNRep
 authors: [Marc_Seamus]

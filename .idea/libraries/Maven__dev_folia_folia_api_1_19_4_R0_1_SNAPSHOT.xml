@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: dev.folia:folia-api:1.19.4-R0.1-SNAPSHOT">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/dev/folia/folia-api/1.19.4-R0.1-SNAPSHOT/folia-api-1.19.4-R0.1-20230404.070314-23.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/dev/folia/folia-api/1.19.4-R0.1-SNAPSHOT/folia-api-1.19.4-R0.1-20230404.070314-23-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/dev/folia/folia-api/1.19.4-R0.1-SNAPSHOT/folia-api-1.19.4-R0.1-20230404.070314-23-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

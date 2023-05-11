@@ -6,6 +6,7 @@ import net.playavalon.avngui.AvnAPI;
 import net.playavalon.avngui.AvnGUI;
 import net.playavalon.avnitems.AvalonItems;
 import net.playavalon.avnrep.api.ReputationAPI;
+import net.playavalon.avnrep.compatibility.ScheduleAdapter;
 import net.playavalon.avnrep.data.AvalonPlayerManager;
 import net.playavalon.avnrep.data.OnlineSQLDatabase;
 import net.playavalon.avnrep.data.player.AvalonPlayer;
@@ -21,7 +22,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.File;
 
@@ -62,81 +62,77 @@ public final class AvNRep extends JavaPlugin {
         saveDefaultConfig();
         config = getConfig();
 
-        new BukkitRunnable() {
-            @Override
-            public void run() {
+        if (Bukkit.getVersion().contains("Folia")) ScheduleAdapter.setFolia(true);
 
-                // API Setup
-                avnAPI = new AvnAPI(plugin);
-                AvnGUI.debug = false;
-
-
-                if (config.getBoolean("Database.Enabled", false)) {
-                    database = new OnlineSQLDatabase();
-                }
-
-                if (Bukkit.getPluginManager().getPlugin("AvNItems") != null) {
-                    System.out.println(debugPrefix + "Found AvNItems plugin! Enabling compatibility...");
-                    avni = (AvalonItems)Bukkit.getPluginManager().getPlugin("AvNItems");
-                }
-                if (Bukkit.getPluginManager().getPlugin("AvNCombat") != null) {
-                    System.out.println(debugPrefix + "Found AvNCombat plugin! Enabling compatibility...");
-                    avnc = (AvalonCombat)Bukkit.getPluginManager().getPlugin("AvNCombat");
-                }
-                if (Bukkit.getPluginManager().getPlugin("MythicMobs") != null) {
-                    System.out.println(debugPrefix + "Found MythicMobs plugin! Enabling compatibility...");
-                    mm = (MythicBukkit) Bukkit.getPluginManager().getPlugin("MythicMobs");
-                    Bukkit.getPluginManager().registerEvents(new MythicListener(), plugin);
-                }
-
-                repManager = new FactionManager();
-                playerManager = new AvalonPlayerManager();
-                playerData = new File(getDataFolder(), "playerdata");
-                if (!playerData.exists()) {
-                    playerData.mkdir();
-                }
-
-                Bukkit.getPluginManager().registerEvents(new AvalonListener(), plugin);
-
-                // Register reputation triggers
-                ReputationAPI api = new ReputationAPI();
-                api.registerTrigger(new TriggerKillMob());
-                api.registerTrigger(new TriggerBreakBlock());
-                api.registerTrigger(new TriggerPlaceBlock());
-                api.registerTrigger(new TriggerCraftItem());
-                api.registerTrigger(new TriggerPlayerDeath());
-                api.registerTrigger(new TriggerPlayerLevelUp());
-                if (Bukkit.getPluginManager().getPlugin("MythicMobs") != null) {
-                    api.registerTrigger(new TriggerKillMythicMob());
-                }
-                if (Bukkit.getPluginManager().getPlugin("AvNCombat") != null) {
-                    api.registerTrigger(new TriggerClassLevelUp());
-                }
-                if (Bukkit.getPluginManager().getPlugin("AvNItems") != null) {
-                    api.registerTrigger(new TriggerCraftAvalonItem());
-                    api.registerTrigger(new TriggerCraftAvalonItemHQ());
-                    api.registerTrigger(new TriggerGatherAvalonItem());
-                    api.registerTrigger(new TriggerGatherAvalonItemHQ());
-                }
+        ScheduleAdapter.runTaskLater(() -> {
+            // API Setup
+            avnAPI = new AvnAPI(plugin);
+            AvnGUI.debug = false;
 
 
-                // Initialize reputation shops
-                shopManager = new ShopManager();
-                ymlShops = new File(getDataFolder(), "shops");
-                new YMLShopAdapter();
+            if (config.getBoolean("Database.Enabled", false)) {
+                database = new OnlineSQLDatabase();
+            }
+
+            if (Bukkit.getPluginManager().getPlugin("AvNItems") != null) {
+                System.out.println(debugPrefix + "Found AvNItems plugin! Enabling compatibility...");
+                avni = (AvalonItems)Bukkit.getPluginManager().getPlugin("AvNItems");
+            }
+            if (Bukkit.getPluginManager().getPlugin("AvNCombat") != null) {
+                System.out.println(debugPrefix + "Found AvNCombat plugin! Enabling compatibility...");
+                avnc = (AvalonCombat)Bukkit.getPluginManager().getPlugin("AvNCombat");
+            }
+            if (Bukkit.getPluginManager().getPlugin("MythicMobs") != null) {
+                System.out.println(debugPrefix + "Found MythicMobs plugin! Enabling compatibility...");
+                mm = (MythicBukkit) Bukkit.getPluginManager().getPlugin("MythicMobs");
+                Bukkit.getPluginManager().registerEvents(new MythicListener(), plugin);
+            }
+
+            repManager = new FactionManager();
+            playerManager = new AvalonPlayerManager();
+            playerData = new File(getDataFolder(), "playerdata");
+            if (!playerData.exists()) {
+                playerData.mkdir();
+            }
+
+            Bukkit.getPluginManager().registerEvents(new AvalonListener(), plugin);
+
+            // Register reputation triggers
+            ReputationAPI api = new ReputationAPI();
+            api.registerTrigger(new TriggerKillMob());
+            api.registerTrigger(new TriggerBreakBlock());
+            api.registerTrigger(new TriggerPlaceBlock());
+            api.registerTrigger(new TriggerCraftItem());
+            api.registerTrigger(new TriggerPlayerDeath());
+            api.registerTrigger(new TriggerPlayerLevelUp());
+            if (Bukkit.getPluginManager().getPlugin("MythicMobs") != null) {
+                api.registerTrigger(new TriggerKillMythicMob());
+            }
+            if (Bukkit.getPluginManager().getPlugin("AvNCombat") != null) {
+                api.registerTrigger(new TriggerClassLevelUp());
+            }
+            if (Bukkit.getPluginManager().getPlugin("AvNItems") != null) {
+                api.registerTrigger(new TriggerCraftAvalonItem());
+                api.registerTrigger(new TriggerCraftAvalonItemHQ());
+                api.registerTrigger(new TriggerGatherAvalonItem());
+                api.registerTrigger(new TriggerGatherAvalonItemHQ());
+            }
 
 
-                // Functionality for hot loading and reloading (via say PlugMan)
-                if (Bukkit.getOnlinePlayers().size() > 0) {
-                    for (Player player : Bukkit.getOnlinePlayers()) {
-                        // Code to reestablish player objects for AvN Reputation
-                        playerManager.put(player);
-                    }
+            // Initialize reputation shops
+            shopManager = new ShopManager();
+            ymlShops = new File(getDataFolder(), "shops");
+            new YMLShopAdapter();
+
+
+            // Functionality for hot loading and reloading (via say PlugMan)
+            if (Bukkit.getOnlinePlayers().size() > 0) {
+                for (Player player : Bukkit.getOnlinePlayers()) {
+                    // Code to reestablish player objects for AvN Reputation
+                    playerManager.put(player);
                 }
             }
-        }.runTaskLater(plugin, 1);
-
-
+        }, 1);
 
     }
 

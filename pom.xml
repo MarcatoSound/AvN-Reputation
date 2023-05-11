@@ -127,7 +127,7 @@
         <dependency>
             <groupId>io.lumine</groupId>
             <artifactId>Mythic-Dist</artifactId>
-            <version>5.0.1-Snapshot</version>
+            <version>5.2.6</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
